@@ -1,0 +1,31 @@
+name: "data-analysis-with-r"
+output_dir: "docs"
+navbar:
+  title: "Data Analysis with R"
+  left:
+    - text: "Course"
+      href: index.html
+    - text: "Lessons"
+      menu:
+        - text: "Probability and simulation"
+          href: 01-probability-and-simulation.html
+        - text: "Parameter estimation and confidence intervals"
+          href: 02-confidence-intervals.html
+        - text: "Hypothesis testing"
+          href: 03-hypothesis-testing.html
+        - text: "Correlation and linear regression"
+          href: 04-linear-regression.html
+        - text: "Logistic regression"
+          href: 05-logistic-regression.html
+  right:
+    - icon: fa-github
+      href: https://github.com/jinjiayun57/data-analysis-with-r
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
+    toc: true
+    toc_float: true
+    code_download: true
+    include:
+      after_body: _footer.html

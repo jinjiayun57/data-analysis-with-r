@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Hypothesis testing</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.1/jquery-3.6.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Course</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-probability-and-simulation.html">Probability and simulation</a>
+    </li>
+    <li>
+      <a href="02-confidence-intervals.html">Parameter estimation and confidence intervals</a>
+    </li>
+    <li>
+      <a href="03-hypothesis-testing.html">Hypothesis testing</a>
+    </li>
+    <li>
+      <a href="04-linear-regression.html">Correlation and linear regression</a>
+    </li>
+    <li>
+      <a href="05-logistic-regression.html">Logistic regression</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jinjiayun57/data-analysis-with-r">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Hypothesis testing</h1>
+
+</div>
+
+
+<p><em>Session 7 of the <a href="index.html">course</a> · <a
+href="slides/07-hypothesis-testing.pdf">Slides for this session
+(PDF)</a></em></p>
+<p><strong>Learning goals.</strong> After this lesson you can</p>
+<ul>
+<li>state null and alternative hypotheses and draw the rejection region
+of a test;</li>
+<li>compute a test statistic and a p-value by hand and check them with
+R;</li>
+<li>explain, using a simulation, what the significance level <span
+class="math inline">\(\alpha\)</span> controls.</li>
+</ul>
+<div id="the-logic-how-surprising-is-our-sample" class="section level2">
+<h2>The logic: how surprising is our sample?</h2>
+<p>A hypothesis test asks: <em>if the null hypothesis were true, how
+surprising would a result like ours be?</em> We decide in advance what
+counts as “too surprising”. That is the significance level <span
+class="math inline">\(\alpha\)</span>, and it defines the
+<strong>rejection region</strong> of the test statistic.</p>
+<p>For a two-sided z-test at <span class="math inline">\(\alpha =
+0.05\)</span>, the rejection region is the outer 5% of the standard
+normal distribution:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>z_crit <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>curve_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="fl">0.01</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>curve_data<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(curve_data<span class="sc">$</span>x)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(curve_data, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">data =</span> <span class="fu">subset</span>(curve_data, x <span class="sc">&lt;</span> <span class="sc">-</span>z_crit), <span class="at">fill =</span> pal[<span class="dv">5</span>]) <span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">data =</span> <span class="fu">subset</span>(curve_data, x <span class="sc">&gt;</span>  z_crit), <span class="at">fill =</span> pal[<span class="dv">5</span>]) <span class="sc">+</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">colour =</span> pal[<span class="dv">2</span>]) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">round</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span>z_crit, <span class="dv">0</span>, z_crit, <span class="dv">3</span>), <span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;z&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="03-hypothesis-testing_files/figure-html/rejection-region-1.png" width="770" /></p>
+</div>
+<div id="a-two-sided-z-test-step-by-step" class="section level2">
+<h2>A two-sided z-test, step by step</h2>
+<p>Suppose a population is normal with known standard deviation <span
+class="math inline">\(\sigma = 1\)</span>, and we test</p>
+<p><span class="math display">\[H_0: \mu = 0 \qquad H_1: \mu \neq
+0.\]</span></p>
+<p>We draw a sample of <span class="math inline">\(n = 50\)</span> (in
+this simulation the true mean is in fact 0.2):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">132</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="at">mean =</span> <span class="fl">0.2</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>By the central limit theorem, <span class="math inline">\((\bar{x} -
+\mu_0)/(\sigma/\sqrt{n})\)</span> follows a standard normal distribution
+if <span class="math inline">\(H_0\)</span> is true:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>z <span class="ot">&lt;-</span> (<span class="fu">mean</span>(x) <span class="sc">-</span> <span class="dv">0</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">50</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>z</span></code></pre></div>
+<pre><code>## [1] 2.059999</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>z_crit</span></code></pre></div>
+<pre><code>## [1] 1.959964</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_segment</span>(<span class="at">x =</span> z, <span class="at">xend =</span> z, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="fu">dnorm</span>(z),</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                 <span class="at">colour =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>)</span></code></pre></div>
+<p><img src="03-hypothesis-testing_files/figure-html/z-plot-1.png" width="770" /></p>
+<p>The test statistic lies in the rejection region, so we reject <span
+class="math inline">\(H_0\)</span>. The same decision follows from the
+p-value, the probability under <span class="math inline">\(H_0\)</span>
+of a result at least as extreme as ours:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(z))</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>p_value</span></code></pre></div>
+<pre><code>## [1] 0.03939867</code></pre>
+<p>Because the test is two-sided, extreme results in either direction
+count, and the tail probability is doubled. Using <code>abs(z)</code>
+makes the formula work whether <span class="math inline">\(z\)</span> is
+positive or negative.</p>
+</div>
+<div id="one-sided-t-tests" class="section level2">
+<h2>One-sided t-tests</h2>
+<p>When <span class="math inline">\(\sigma\)</span> is unknown we use
+the t distribution.</p>
+<p><strong>A left-sided test.</strong> A chocolate factory claims that
+its bars weigh at least 40 grams on average. An inspector weighs a
+random sample of 20 bars: <span class="math inline">\(\bar{x} =
+38.5\)</span>, <span class="math inline">\(s = 3.1\)</span>.</p>
+<p><span class="math display">\[H_0: \mu \ge 40 \qquad H_1: \mu &lt;
+40\]</span></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> (<span class="fl">38.5</span> <span class="sc">-</span> <span class="dv">40</span>) <span class="sc">/</span> (<span class="fl">3.1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">20</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.05</span>, <span class="at">df =</span> <span class="dv">19</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t =</span> t_stat, <span class="at">critical =</span> t_crit, <span class="at">p =</span> <span class="fu">pt</span>(t_stat, <span class="at">df =</span> <span class="dv">19</span>))</span></code></pre></div>
+<pre><code>##           t    critical           p 
+## -2.16393675 -1.72913281  0.02170838</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>t_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="fl">0.01</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>t_data<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">dt</span>(t_data<span class="sc">$</span>x, <span class="at">df =</span> <span class="dv">19</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">ggplot</span>(t_data, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">data =</span> <span class="fu">subset</span>(t_data, x <span class="sc">&lt;</span> t_crit), <span class="at">fill =</span> pal[<span class="dv">5</span>]) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">x =</span> t_stat, <span class="at">xend =</span> t_stat, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="fu">dt</span>(t_stat, <span class="dv">19</span>),</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>               <span class="at">colour =</span> <span class="st">&quot;darkred&quot;</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;t&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>)</span></code></pre></div>
+<p><img src="03-hypothesis-testing_files/figure-html/left-plot-1.png" width="770" /></p>
+<p>The rejection region is in the left tail, because only small sample
+means count as evidence against <span
+class="math inline">\(H_0\)</span>. The statistic falls inside it: we
+reject <span class="math inline">\(H_0\)</span>.</p>
+<p><strong>A right-sided test.</strong> Now <span
+class="math inline">\(H_0: \mu \le 40\)</span> versus <span
+class="math inline">\(H_1: \mu &gt; 40\)</span>, with <span
+class="math inline">\(\bar{x} = 41\)</span>, <span
+class="math inline">\(s = 4\)</span>, <span class="math inline">\(n =
+20\)</span>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> (<span class="dv">41</span> <span class="sc">-</span> <span class="dv">40</span>) <span class="sc">/</span> (<span class="dv">4</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">20</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">c</span>(<span class="at">t =</span> t_stat, <span class="at">critical =</span> <span class="fu">qt</span>(<span class="fl">0.95</span>, <span class="at">df =</span> <span class="dv">19</span>), <span class="at">p =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">pt</span>(t_stat, <span class="at">df =</span> <span class="dv">19</span>))</span></code></pre></div>
+<pre><code>##         t  critical         p 
+## 1.1180340 1.7291328 0.1387451</code></pre>
+<p>The statistic does not reach the critical value, so we do not reject
+<span class="math inline">\(H_0\)</span>. Not rejecting is not the same
+as showing that <span class="math inline">\(H_0\)</span> is true: the
+sample is simply not informative enough to rule it out.</p>
+</div>
+<div id="two-kinds-of-error" class="section level2">
+<h2>Two kinds of error</h2>
+<p>A statistical decision is always made under uncertainty, so errors
+are unavoidable. Suppose we test whether the average birth weight of
+newborns in a hospital exceeds a reference value <span
+class="math inline">\(\mu_0\)</span> (<span class="math inline">\(H_0:
+\mu \le \mu_0\)</span> versus <span class="math inline">\(H_1: \mu &gt;
+\mu_0\)</span>). Whatever we decide, we can be wrong in one of two
+ways:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(H_0\)</span> is true</th>
+<th><span class="math inline">\(H_0\)</span> is false</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Reject <span
+class="math inline">\(H_0\)</span></strong></td>
+<td>Type I error (false positive), probability <span
+class="math inline">\(\alpha\)</span></td>
+<td>Correct decision (true positive)</td>
+</tr>
+<tr class="even">
+<td><strong>Do not reject <span
+class="math inline">\(H_0\)</span></strong></td>
+<td>Correct decision (true negative)</td>
+<td>Type II error (false negative), probability <span
+class="math inline">\(\beta\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The significance level fixes the risk of a Type I error in advance.
+The risk of a Type II error depends on the true effect and the sample
+size; <span class="math inline">\(1 - \beta\)</span> is the
+<strong>power</strong> of the test.</p>
+</div>
+<div id="what-does-the-significance-level-control-a-simulation"
+class="section level2">
+<h2>What does the significance level control? A simulation</h2>
+<p>If <span class="math inline">\(H_0\)</span> is true and we test at
+<span class="math inline">\(\alpha = 0.05\)</span>, how often do we
+wrongly reject it? We simulate 10,000 studies in which the null
+hypothesis is true:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>p_values <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10000</span>, <span class="fu">t.test</span>(<span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>), <span class="at">mu =</span> <span class="dv">0</span>)<span class="sc">$</span>p.value)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">mean</span>(p_values <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## [1] 0.0502</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">hist</span>(p_values, <span class="at">breaks =</span> <span class="dv">20</span>, <span class="at">col =</span> pal[<span class="dv">1</span>], <span class="at">border =</span> <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;p-values when the null hypothesis is true&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;p-value&quot;</span>)</span></code></pre></div>
+<p><img src="03-hypothesis-testing_files/figure-html/type-1-1.png" width="770" /></p>
+<p>About 5% of the studies reject <span
+class="math inline">\(H_0\)</span> even though it is true. These are
+<strong>Type I errors</strong>, and <span
+class="math inline">\(\alpha\)</span> is their long-run rate. The
+histogram also shows something students rarely expect: when <span
+class="math inline">\(H_0\)</span> is true, p-values are spread evenly
+between 0 and 1.</p>
+</div>
+<div id="try-it-yourself" class="section level2">
+<h2>Try it yourself</h2>
+<ol style="list-style-type: decimal">
+<li>Change the true mean in the last simulation from 0 to 0.3. What
+proportion of studies now reject <span
+class="math inline">\(H_0\)</span>? This proportion is the
+<strong>power</strong> of the test.</li>
+<li>Repeat exercise 1 with samples of 10, 30 and 100. How does power
+depend on the sample size?</li>
+<li>Imagine running 20 independent tests on data where every null
+hypothesis is true. Using the simulation result, how many “significant”
+results would you expect? What does this imply for studies that test
+many outcomes?</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSHlwb3RoZXNpcyB0ZXN0aW5nIgotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGZpZy53aWR0aCA9IDcsIGZpZy5oZWlnaHQgPSA0LCBkcGkgPSAxMTApCmxpYnJhcnkoZ2dwbG90MikKbGlicmFyeShSQ29sb3JCcmV3ZXIpCnBhbCA8LSBicmV3ZXIucGFsKDgsICJQYWlyZWQiKQp0aGVtZV9zZXQodGhlbWVfYncoYmFzZV9zaXplID0gMTMpKQpgYGAKCipTZXNzaW9uIDcgb2YgdGhlIFtjb3Vyc2VdKGluZGV4Lmh0bWwpIMK3IFtTbGlkZXMgZm9yIHRoaXMgc2Vzc2lvbiAoUERGKV0oc2xpZGVzLzA3LWh5cG90aGVzaXMtdGVzdGluZy5wZGYpKgoKKipMZWFybmluZyBnb2Fscy4qKiBBZnRlciB0aGlzIGxlc3NvbiB5b3UgY2FuCgotIHN0YXRlIG51bGwgYW5kIGFsdGVybmF0aXZlIGh5cG90aGVzZXMgYW5kIGRyYXcgdGhlIHJlamVjdGlvbiByZWdpb24gb2YgYSB0ZXN0OwotIGNvbXB1dGUgYSB0ZXN0IHN0YXRpc3RpYyBhbmQgYSBwLXZhbHVlIGJ5IGhhbmQgYW5kIGNoZWNrIHRoZW0gd2l0aCBSOwotIGV4cGxhaW4sIHVzaW5nIGEgc2ltdWxhdGlvbiwgd2hhdCB0aGUgc2lnbmlmaWNhbmNlIGxldmVsICRcYWxwaGEkIGNvbnRyb2xzLgoKIyMgVGhlIGxvZ2ljOiBob3cgc3VycHJpc2luZyBpcyBvdXIgc2FtcGxlPwoKQSBoeXBvdGhlc2lzIHRlc3QgYXNrczogKmlmIHRoZSBudWxsIGh5cG90aGVzaXMgd2VyZSB0cnVlLCBob3cgc3VycHJpc2luZyB3b3VsZAphIHJlc3VsdCBsaWtlIG91cnMgYmU/KiBXZSBkZWNpZGUgaW4gYWR2YW5jZSB3aGF0IGNvdW50cyBhcyAidG9vIHN1cnByaXNpbmciLgpUaGF0IGlzIHRoZSBzaWduaWZpY2FuY2UgbGV2ZWwgJFxhbHBoYSQsIGFuZCBpdCBkZWZpbmVzIHRoZSAqKnJlamVjdGlvbiByZWdpb24qKgpvZiB0aGUgdGVzdCBzdGF0aXN0aWMuCgpGb3IgYSB0d28tc2lkZWQgei10ZXN0IGF0ICRcYWxwaGEgPSAwLjA1JCwgdGhlIHJlamVjdGlvbiByZWdpb24gaXMgdGhlIG91dGVyIDUlCm9mIHRoZSBzdGFuZGFyZCBub3JtYWwgZGlzdHJpYnV0aW9uOgoKYGBge3IgcmVqZWN0aW9uLXJlZ2lvbn0KYWxwaGEgPC0gMC4wNQp6X2NyaXQgPC0gcW5vcm0oMSAtIGFscGhhIC8gMikKY3VydmVfZGF0YSA8LSBkYXRhLmZyYW1lKHggPSBzZXEoLTQsIDQsIDAuMDEpKQpjdXJ2ZV9kYXRhJHkgPC0gZG5vcm0oY3VydmVfZGF0YSR4KQoKcCA8LSBnZ3Bsb3QoY3VydmVfZGF0YSwgYWVzKHgsIHkpKSArCiAgZ2VvbV9hcmVhKGRhdGEgPSBzdWJzZXQoY3VydmVfZGF0YSwgeCA8IC16X2NyaXQpLCBmaWxsID0gcGFsWzVdKSArCiAgZ2VvbV9hcmVhKGRhdGEgPSBzdWJzZXQoY3VydmVfZGF0YSwgeCA+ICB6X2NyaXQpLCBmaWxsID0gcGFsWzVdKSArCiAgZ2VvbV9saW5lKGxpbmV3aWR0aCA9IDEsIGNvbG91ciA9IHBhbFsyXSkgKwogIHNjYWxlX3hfY29udGludW91cyhicmVha3MgPSByb3VuZChjKC0zLCAtel9jcml0LCAwLCB6X2NyaXQsIDMpLCAyKSkgKwogIGxhYnMoeCA9ICJ6IiwgeSA9ICJEZW5zaXR5IikKcApgYGAKCiMjIEEgdHdvLXNpZGVkIHotdGVzdCwgc3RlcCBieSBzdGVwCgpTdXBwb3NlIGEgcG9wdWxhdGlvbiBpcyBub3JtYWwgd2l0aCBrbm93biBzdGFuZGFyZCBkZXZpYXRpb24gJFxzaWdtYSA9IDEkLCBhbmQKd2UgdGVzdAoKJCRIXzA6IFxtdSA9IDAgXHFxdWFkIEhfMTogXG11IFxuZXEgMC4kJAoKV2UgZHJhdyBhIHNhbXBsZSBvZiAkbiA9IDUwJCAoaW4gdGhpcyBzaW11bGF0aW9uIHRoZSB0cnVlIG1lYW4gaXMgaW4gZmFjdCAwLjIpOgoKYGBge3Igei1zYW1wbGV9CnNldC5zZWVkKDEzMikKeCA8LSBybm9ybSg1MCwgbWVhbiA9IDAuMiwgc2QgPSAxKQpgYGAKCkJ5IHRoZSBjZW50cmFsIGxpbWl0IHRoZW9yZW0sICQoXGJhcnt4fSAtIFxtdV8wKS8oXHNpZ21hL1xzcXJ0e259KSQgZm9sbG93cyBhCnN0YW5kYXJkIG5vcm1hbCBkaXN0cmlidXRpb24gaWYgJEhfMCQgaXMgdHJ1ZToKCmBgYHtyIHotc3RhdH0KeiA8LSAobWVhbih4KSAtIDApIC8gKDEgLyBzcXJ0KDUwKSkKegp6X2NyaXQKYGBgCgpgYGB7ciB6LXBsb3R9CnAgKyBnZW9tX3NlZ21lbnQoeCA9IHosIHhlbmQgPSB6LCB5ID0gMCwgeWVuZCA9IGRub3JtKHopLAogICAgICAgICAgICAgICAgIGNvbG91ciA9ICJkYXJrcmVkIiwgbGluZXdpZHRoID0gMS4yKQpgYGAKClRoZSB0ZXN0IHN0YXRpc3RpYyBsaWVzIGluIHRoZSByZWplY3Rpb24gcmVnaW9uLCBzbyB3ZSByZWplY3QgJEhfMCQuIFRoZSBzYW1lCmRlY2lzaW9uIGZvbGxvd3MgZnJvbSB0aGUgcC12YWx1ZSwgdGhlIHByb2JhYmlsaXR5IHVuZGVyICRIXzAkIG9mIGEgcmVzdWx0IGF0CmxlYXN0IGFzIGV4dHJlbWUgYXMgb3VyczoKCmBgYHtyIHAtdmFsdWV9CnBfdmFsdWUgPC0gMiAqIHBub3JtKC1hYnMoeikpCnBfdmFsdWUKYGBgCgpCZWNhdXNlIHRoZSB0ZXN0IGlzIHR3by1zaWRlZCwgZXh0cmVtZSByZXN1bHRzIGluIGVpdGhlciBkaXJlY3Rpb24gY291bnQsIGFuZAp0aGUgdGFpbCBwcm9iYWJpbGl0eSBpcyBkb3VibGVkLiBVc2luZyBgYWJzKHopYCBtYWtlcyB0aGUgZm9ybXVsYSB3b3JrIHdoZXRoZXIKJHokIGlzIHBvc2l0aXZlIG9yIG5lZ2F0aXZlLgoKIyMgT25lLXNpZGVkIHQtdGVzdHMKCldoZW4gJFxzaWdtYSQgaXMgdW5rbm93biB3ZSB1c2UgdGhlIHQgZGlzdHJpYnV0aW9uLgoKKipBIGxlZnQtc2lkZWQgdGVzdC4qKiBBIGNob2NvbGF0ZSBmYWN0b3J5IGNsYWltcyB0aGF0IGl0cyBiYXJzIHdlaWdoIGF0IGxlYXN0CjQwIGdyYW1zIG9uIGF2ZXJhZ2UuIEFuIGluc3BlY3RvciB3ZWlnaHMgYSByYW5kb20gc2FtcGxlIG9mIDIwIGJhcnM6CiRcYmFye3h9ID0gMzguNSQsICRzID0gMy4xJC4KCiQkSF8wOiBcbXUgXGdlIDQwIFxxcXVhZCBIXzE6IFxtdSA8IDQwJCQKCmBgYHtyIGxlZnQtdGVzdH0KdF9zdGF0IDwtICgzOC41IC0gNDApIC8gKDMuMSAvIHNxcnQoMjApKQp0X2NyaXQgPC0gcXQoMC4wNSwgZGYgPSAxOSkKYyh0ID0gdF9zdGF0LCBjcml0aWNhbCA9IHRfY3JpdCwgcCA9IHB0KHRfc3RhdCwgZGYgPSAxOSkpCmBgYAoKYGBge3IgbGVmdC1wbG90fQp0X2RhdGEgPC0gZGF0YS5mcmFtZSh4ID0gc2VxKC0zLjUsIDMuNSwgMC4wMSkpCnRfZGF0YSR5IDwtIGR0KHRfZGF0YSR4LCBkZiA9IDE5KQpnZ3Bsb3QodF9kYXRhLCBhZXMoeCwgeSkpICsKICBnZW9tX2FyZWEoZGF0YSA9IHN1YnNldCh0X2RhdGEsIHggPCB0X2NyaXQpLCBmaWxsID0gcGFsWzVdKSArCiAgZ2VvbV9saW5lKCkgKwogIGdlb21fc2VnbWVudCh4ID0gdF9zdGF0LCB4ZW5kID0gdF9zdGF0LCB5ID0gMCwgeWVuZCA9IGR0KHRfc3RhdCwgMTkpLAogICAgICAgICAgICAgICBjb2xvdXIgPSAiZGFya3JlZCIsIGxpbmV3aWR0aCA9IDEuMikgKwogIGxhYnMoeCA9ICJ0IiwgeSA9ICJEZW5zaXR5IikKYGBgCgpUaGUgcmVqZWN0aW9uIHJlZ2lvbiBpcyBpbiB0aGUgbGVmdCB0YWlsLCBiZWNhdXNlIG9ubHkgc21hbGwgc2FtcGxlIG1lYW5zIGNvdW50CmFzIGV2aWRlbmNlIGFnYWluc3QgJEhfMCQuIFRoZSBzdGF0aXN0aWMgZmFsbHMgaW5zaWRlIGl0OiB3ZSByZWplY3QgJEhfMCQuCgoqKkEgcmlnaHQtc2lkZWQgdGVzdC4qKiBOb3cgJEhfMDogXG11IFxsZSA0MCQgdmVyc3VzICRIXzE6IFxtdSA+IDQwJCwgd2l0aAokXGJhcnt4fSA9IDQxJCwgJHMgPSA0JCwgJG4gPSAyMCQ6CgpgYGB7ciByaWdodC10ZXN0fQp0X3N0YXQgPC0gKDQxIC0gNDApIC8gKDQgLyBzcXJ0KDIwKSkKYyh0ID0gdF9zdGF0LCBjcml0aWNhbCA9IHF0KDAuOTUsIGRmID0gMTkpLCBwID0gMSAtIHB0KHRfc3RhdCwgZGYgPSAxOSkpCmBgYAoKVGhlIHN0YXRpc3RpYyBkb2VzIG5vdCByZWFjaCB0aGUgY3JpdGljYWwgdmFsdWUsIHNvIHdlIGRvIG5vdCByZWplY3QgJEhfMCQuCk5vdCByZWplY3RpbmcgaXMgbm90IHRoZSBzYW1lIGFzIHNob3dpbmcgdGhhdCAkSF8wJCBpcyB0cnVlOiB0aGUgc2FtcGxlIGlzCnNpbXBseSBub3QgaW5mb3JtYXRpdmUgZW5vdWdoIHRvIHJ1bGUgaXQgb3V0LgoKIyMgVHdvIGtpbmRzIG9mIGVycm9yCgpBIHN0YXRpc3RpY2FsIGRlY2lzaW9uIGlzIGFsd2F5cyBtYWRlIHVuZGVyIHVuY2VydGFpbnR5LCBzbyBlcnJvcnMgYXJlCnVuYXZvaWRhYmxlLiBTdXBwb3NlIHdlIHRlc3Qgd2hldGhlciB0aGUgYXZlcmFnZSBiaXJ0aCB3ZWlnaHQgb2YgbmV3Ym9ybnMgaW4gYQpob3NwaXRhbCBleGNlZWRzIGEgcmVmZXJlbmNlIHZhbHVlICRcbXVfMCQgKCRIXzA6IFxtdSBcbGUgXG11XzAkIHZlcnN1cwokSF8xOiBcbXUgPiBcbXVfMCQpLiBXaGF0ZXZlciB3ZSBkZWNpZGUsIHdlIGNhbiBiZSB3cm9uZyBpbiBvbmUgb2YgdHdvIHdheXM6Cgp8IHwgJEhfMCQgaXMgdHJ1ZSB8ICRIXzAkIGlzIGZhbHNlIHwKfC0tLXwtLS18LS0tfAp8ICoqUmVqZWN0ICRIXzAkKiogfCBUeXBlIEkgZXJyb3IgKGZhbHNlIHBvc2l0aXZlKSwgcHJvYmFiaWxpdHkgJFxhbHBoYSQgfCBDb3JyZWN0IGRlY2lzaW9uICh0cnVlIHBvc2l0aXZlKSB8CnwgKipEbyBub3QgcmVqZWN0ICRIXzAkKiogfCBDb3JyZWN0IGRlY2lzaW9uICh0cnVlIG5lZ2F0aXZlKSB8IFR5cGUgSUkgZXJyb3IgKGZhbHNlIG5lZ2F0aXZlKSwgcHJvYmFiaWxpdHkgJFxiZXRhJCB8CgpUaGUgc2lnbmlmaWNhbmNlIGxldmVsIGZpeGVzIHRoZSByaXNrIG9mIGEgVHlwZSBJIGVycm9yIGluIGFkdmFuY2UuIFRoZSByaXNrIG9mCmEgVHlwZSBJSSBlcnJvciBkZXBlbmRzIG9uIHRoZSB0cnVlIGVmZmVjdCBhbmQgdGhlIHNhbXBsZSBzaXplOyAkMSAtIFxiZXRhJCBpcwp0aGUgKipwb3dlcioqIG9mIHRoZSB0ZXN0LgoKIyMgV2hhdCBkb2VzIHRoZSBzaWduaWZpY2FuY2UgbGV2ZWwgY29udHJvbD8gQSBzaW11bGF0aW9uCgpJZiAkSF8wJCBpcyB0cnVlIGFuZCB3ZSB0ZXN0IGF0ICRcYWxwaGEgPSAwLjA1JCwgaG93IG9mdGVuIGRvIHdlIHdyb25nbHkgcmVqZWN0Cml0PyBXZSBzaW11bGF0ZSAxMCwwMDAgc3R1ZGllcyBpbiB3aGljaCB0aGUgbnVsbCBoeXBvdGhlc2lzIGlzIHRydWU6CgpgYGB7ciB0eXBlLTF9CnNldC5zZWVkKDEpCnBfdmFsdWVzIDwtIHJlcGxpY2F0ZSgxMDAwMCwgdC50ZXN0KHJub3JtKDMwLCBtZWFuID0gMCwgc2QgPSAxKSwgbXUgPSAwKSRwLnZhbHVlKQptZWFuKHBfdmFsdWVzIDwgMC4wNSkKaGlzdChwX3ZhbHVlcywgYnJlYWtzID0gMjAsIGNvbCA9IHBhbFsxXSwgYm9yZGVyID0gIndoaXRlIiwKICAgICBtYWluID0gInAtdmFsdWVzIHdoZW4gdGhlIG51bGwgaHlwb3RoZXNpcyBpcyB0cnVlIiwgeGxhYiA9ICJwLXZhbHVlIikKYGBgCgpBYm91dCA1JSBvZiB0aGUgc3R1ZGllcyByZWplY3QgJEhfMCQgZXZlbiB0aG91Z2ggaXQgaXMgdHJ1ZS4gVGhlc2UgYXJlICoqVHlwZSBJCmVycm9ycyoqLCBhbmQgJFxhbHBoYSQgaXMgdGhlaXIgbG9uZy1ydW4gcmF0ZS4gVGhlIGhpc3RvZ3JhbSBhbHNvIHNob3dzCnNvbWV0aGluZyBzdHVkZW50cyByYXJlbHkgZXhwZWN0OiB3aGVuICRIXzAkIGlzIHRydWUsIHAtdmFsdWVzIGFyZSBzcHJlYWQKZXZlbmx5IGJldHdlZW4gMCBhbmQgMS4KCiMjIFRyeSBpdCB5b3Vyc2VsZgoKMS4gQ2hhbmdlIHRoZSB0cnVlIG1lYW4gaW4gdGhlIGxhc3Qgc2ltdWxhdGlvbiBmcm9tIDAgdG8gMC4zLiBXaGF0IHByb3BvcnRpb24KICAgb2Ygc3R1ZGllcyBub3cgcmVqZWN0ICRIXzAkPyBUaGlzIHByb3BvcnRpb24gaXMgdGhlICoqcG93ZXIqKiBvZiB0aGUgdGVzdC4KMi4gUmVwZWF0IGV4ZXJjaXNlIDEgd2l0aCBzYW1wbGVzIG9mIDEwLCAzMCBhbmQgMTAwLiBIb3cgZG9lcyBwb3dlciBkZXBlbmQgb24KICAgdGhlIHNhbXBsZSBzaXplPwozLiBJbWFnaW5lIHJ1bm5pbmcgMjAgaW5kZXBlbmRlbnQgdGVzdHMgb24gZGF0YSB3aGVyZSBldmVyeSBudWxsIGh5cG90aGVzaXMgaXMKICAgdHJ1ZS4gVXNpbmcgdGhlIHNpbXVsYXRpb24gcmVzdWx0LCBob3cgbWFueSAic2lnbmlmaWNhbnQiIHJlc3VsdHMgd291bGQgeW91CiAgIGV4cGVjdD8gV2hhdCBkb2VzIHRoaXMgaW1wbHkgZm9yIHN0dWRpZXMgdGhhdCB0ZXN0IG1hbnkgb3V0Y29tZXM/Cg==</div>
+<hr>
+<p style="font-size:0.85em;color:#666">Jiayun Jin · Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the MIT License.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("03-hypothesis-testing.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

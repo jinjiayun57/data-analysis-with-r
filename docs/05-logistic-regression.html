@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Logistic regression</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.1/jquery-3.6.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Course</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-probability-and-simulation.html">Probability and simulation</a>
+    </li>
+    <li>
+      <a href="02-confidence-intervals.html">Parameter estimation and confidence intervals</a>
+    </li>
+    <li>
+      <a href="03-hypothesis-testing.html">Hypothesis testing</a>
+    </li>
+    <li>
+      <a href="04-linear-regression.html">Correlation and linear regression</a>
+    </li>
+    <li>
+      <a href="05-logistic-regression.html">Logistic regression</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jinjiayun57/data-analysis-with-r">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Logistic regression</h1>
+
+</div>
+
+
+<p><em>Session 14 of the <a href="index.html">course</a> · <a
+href="slides/14-generalised-linear-models.pdf">Slides for this session
+(PDF)</a></em></p>
+<p><strong>Learning goals.</strong> After this lesson you can</p>
+<ul>
+<li>explain why a linear model is unsuitable for a binary outcome;</li>
+<li>explain the idea of maximum likelihood estimation;</li>
+<li>fit a logistic regression and interpret its coefficients as odds
+ratios;</li>
+<li>turn predicted probabilities into classifications and evaluate them
+on new data.</li>
+</ul>
+<div id="the-data" class="section level2">
+<h2>The data</h2>
+<p>The <code>Pima.tr</code> and <code>Pima.te</code> data sets in the
+<code>MASS</code> package come from a study of women of Pima Indian
+heritage aged 21 or older. The outcome <code>type</code> records whether
+a woman has diabetes. We use <code>Pima.tr</code> (200 women) to fit
+models and <code>Pima.te</code> (332 women) to test them.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>train <span class="ot">&lt;-</span> Pima.tr</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>test  <span class="ot">&lt;-</span> Pima.te</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>train<span class="sc">$</span>diabetes <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(train<span class="sc">$</span>type <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>test<span class="sc">$</span>diabetes  <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(test<span class="sc">$</span>type <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">head</span>(train)</span></code></pre></div>
+<pre><code>##   npreg glu bp skin  bmi   ped age type diabetes
+## 1     5  86 68   28 30.2 0.364  24   No        0
+## 2     7 195 70   33 25.1 0.163  55  Yes        1
+## 3     5  77 82   41 35.8 0.156  35   No        0
+## 4     0 165 76   43 47.9 0.259  26   No        0
+## 5     0 107 60   25 26.4 0.133  23   No        0
+## 6     5  97 76   27 35.6 0.378  52  Yes        1</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">mean</span>(train<span class="sc">$</span>diabetes)</span></code></pre></div>
+<pre><code>## [1] 0.34</code></pre>
+<p>Let us start with one predictor: plasma glucose concentration
+(<code>glu</code>) from an oral glucose tolerance test. Because the
+outcome is 0 or 1, many points overlap. Adding a little random noise
+(<em>jittering</em>) makes them visible:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(train, <span class="fu">aes</span>(glu, diabetes)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="dv">0</span>, <span class="at">height =</span> <span class="fl">0.05</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Plasma glucose&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Diabetes (1 = yes)&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="05-logistic-regression_files/figure-html/plot-data-1.png" width="770" /></p>
+</div>
+<div id="why-not-a-straight-line" class="section level2">
+<h2>Why not a straight line?</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> pal[<span class="dv">6</span>])</span></code></pre></div>
+<p><img src="05-logistic-regression_files/figure-html/linear-fit-1.png" width="770" /></p>
+<p>A straight line predicts “probabilities” below 0 and above 1 at the
+extremes, and assumes that each extra unit of glucose changes the
+probability by the same amount everywhere. Logistic regression instead
+models the <strong>log-odds</strong>:</p>
+<p><span class="math display">\[\log\frac{p}{1-p} = \beta_0 + \beta_1 x,
+\qquad
+p = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x)}}.\]</span></p>
+<p>The S-shaped curve always stays between 0 and 1.</p>
+</div>
+<div id="how-are-the-coefficients-estimated-maximum-likelihood"
+class="section level2">
+<h2>How are the coefficients estimated? Maximum likelihood</h2>
+<p>Least squares is no longer appropriate, so logistic regression uses
+<strong>maximum likelihood</strong>: choose the parameter values under
+which the observed data are most likely. For independent observations
+<span class="math inline">\(z_1, \dots, z_n\)</span> the likelihood
+is</p>
+<p><span class="math display">\[L(\theta) = \prod_{i=1}^{n} f(z_i \mid
+\theta), \qquad
+\log L(\theta) = \sum_{i=1}^{n} \log f(z_i \mid \theta).\]</span></p>
+<p><strong>Comparing two explanations.</strong> We observe the values 0
+and 3 and propose that they come either from <span
+class="math inline">\(N(1, 2^2)\)</span> or from <span
+class="math inline">\(N(2, 1^2)\)</span>. Which explanation makes the
+data more likely?</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">3</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;N(1, 2)&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="st">&quot;N(2, 1)&quot;</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">1</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)))</span></code></pre></div>
+<pre><code>##   N(1, 2)   N(2, 1) 
+## -3.849171 -4.337877</code></pre>
+<p>The log-likelihood is higher for <span class="math inline">\(N(1,
+2^2)\)</span>: the wider distribution accounts better for two
+observations that lie far apart.</p>
+<p><strong>Searching over all values.</strong> Suppose 6 of 10 patients
+respond to a treatment. The likelihood of a response probability <span
+class="math inline">\(p\)</span> is <span
+class="math inline">\(p^6(1-p)^4\)</span>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>p_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>, <span class="fl">0.01</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>loglik <span class="ot">&lt;-</span> <span class="dv">6</span> <span class="sc">*</span> <span class="fu">log</span>(p_grid) <span class="sc">+</span> <span class="dv">4</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span> <span class="sc">-</span> p_grid)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">plot</span>(p_grid, loglik, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">2</span>],</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;p&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;log-likelihood&quot;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> p_grid[<span class="fu">which.max</span>(loglik)], <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="05-logistic-regression_files/figure-html/ml-curve-1.png" width="770" /></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>p_grid[<span class="fu">which.max</span>(loglik)]</span></code></pre></div>
+<pre><code>## [1] 0.6</code></pre>
+<p>The maximum is at <span class="math inline">\(p = 0.6\)</span>, the
+observed proportion. <code>glm()</code> does the same for the
+coefficients of a logistic regression, searching numerically for the
+values that maximise the likelihood of the observed outcomes.</p>
+</div>
+<div id="fitting-the-model" class="section level2">
+<h2>Fitting the model</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(diabetes <span class="sc">~</span> glu, <span class="at">data =</span> train, <span class="at">family =</span> binomial)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = diabetes ~ glu, family = binomial, data = train)
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -5.503636   0.836077  -6.583 4.62e-11 ***
+## glu          0.037784   0.006278   6.019 1.76e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 256.41  on 199  degrees of freedom
+## Residual deviance: 207.37  on 198  degrees of freedom
+## AIC: 211.37
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;glm&quot;</span>, <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> binomial),</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                <span class="at">colour =</span> pal[<span class="dv">2</span>])</span></code></pre></div>
+<p><img src="05-logistic-regression_files/figure-html/glm-plot-1.png" width="770" /></p>
+<div id="interpreting-the-coefficients" class="section level3">
+<h3>Interpreting the coefficients</h3>
+<p>The slope is a change in log-odds, which is hard to interpret
+directly. Exponentiating it gives an <strong>odds ratio</strong>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(fit))</span></code></pre></div>
+<pre><code>## (Intercept)         glu 
+##  0.00407194  1.03850660</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">confint</span>(fit))</span></code></pre></div>
+<pre><code>##                    2.5 %    97.5 %
+## (Intercept) 0.0007136674 0.0192012
+## glu         1.0264591081 1.0521554</code></pre>
+<p>Each additional unit of glucose multiplies the odds of diabetes by
+about 1.039. For a 10-unit difference the odds are multiplied by <span
+class="math inline">\(1.039^{10} \approx 1.46\)</span>.</p>
+<p>At which glucose level is the predicted probability exactly 0.5? Then
+the log-odds are zero, so <span class="math inline">\(x =
+-\beta_0/\beta_1\)</span>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="sc">-</span><span class="fu">coef</span>(fit)[<span class="dv">1</span>] <span class="sc">/</span> <span class="fu">coef</span>(fit)[<span class="dv">2</span>]</span></code></pre></div>
+<pre><code>## (Intercept) 
+##    145.6616</code></pre>
+</div>
+</div>
+<div id="several-predictors" class="section level2">
+<h2>Several predictors</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(diabetes <span class="sc">~</span> glu <span class="sc">+</span> bmi <span class="sc">+</span> age <span class="sc">+</span> ped, <span class="at">data =</span> train, <span class="at">family =</span> binomial)</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cbind</span>(<span class="at">odds_ratio =</span> <span class="fu">exp</span>(<span class="fu">coef</span>(fit2)), <span class="fu">exp</span>(<span class="fu">confint</span>(fit2))), <span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##             odds_ratio 2.5 % 97.5 %
+## (Intercept)      0.000 0.000  0.001
+## glu              1.032 1.019  1.046
+## bmi              1.080 1.015  1.153
+## age              1.060 1.025  1.099
+## ped              5.583 1.587 20.962</code></pre>
+<p>Each odds ratio now compares women who differ in one predictor while
+the others are held constant. <code>ped</code> is a diabetes pedigree
+function, a score summarising family history of diabetes.</p>
+</div>
+<div id="from-probabilities-to-classifications" class="section level2">
+<h2>From probabilities to classifications</h2>
+<p><code>predict(..., type = "response")</code> returns predicted
+probabilities. A common (but not obligatory) rule classifies a woman as
+“diabetes” when the probability exceeds 0.5. A fair test of a model uses
+data that were <strong>not</strong> used to fit it:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>test<span class="sc">$</span>prob <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit2, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>test<span class="sc">$</span>pred <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(test<span class="sc">$</span>prob <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="fu">table</span>(<span class="at">predicted =</span> test<span class="sc">$</span>pred, <span class="at">observed =</span> test<span class="sc">$</span>diabetes)</span></code></pre></div>
+<pre><code>##          observed
+## predicted   0   1
+##         0 196  42
+##         1  27  67</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">mean</span>(test<span class="sc">$</span>pred <span class="sc">==</span> test<span class="sc">$</span>diabetes)   <span class="co"># accuracy</span></span></code></pre></div>
+<pre><code>## [1] 0.7921687</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sensitivity =</span> <span class="fu">mean</span>(test<span class="sc">$</span>pred[test<span class="sc">$</span>diabetes <span class="sc">==</span> <span class="dv">1</span>] <span class="sc">==</span> <span class="dv">1</span>),</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="at">specificity =</span> <span class="fu">mean</span>(test<span class="sc">$</span>pred[test<span class="sc">$</span>diabetes <span class="sc">==</span> <span class="dv">0</span>] <span class="sc">==</span> <span class="dv">0</span>))</span></code></pre></div>
+<pre><code>## sensitivity specificity 
+##   0.6146789   0.8789238</code></pre>
+<p>Accuracy alone hides an important trade-off.
+<strong>Sensitivity</strong> is the proportion of women with diabetes
+who are correctly identified; <strong>specificity</strong> is the
+proportion without diabetes who are correctly identified. Lowering the
+threshold raises sensitivity and lowers specificity. Which balance is
+acceptable depends on the cost of missing a case compared with the cost
+of a false alarm.</p>
+</div>
+<div id="try-it-yourself" class="section level2">
+<h2>Try it yourself</h2>
+<ol style="list-style-type: decimal">
+<li>Change the classification threshold to 0.3. How do sensitivity and
+specificity change? When might a screening programme prefer this
+threshold?</li>
+<li>Compute accuracy on the <em>training</em> data and compare it with
+the test data. Why is the training accuracy a too optimistic
+estimate?</li>
+<li>Using the built-in <code>mtcars</code> data, model transmission type
+(<code>am</code>, 1 = manual) with <code>mpg</code> and <code>hp</code>.
+Interpret the odds ratio for <code>hp</code>.</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTG9naXN0aWMgcmVncmVzc2lvbiIKLS0tCgpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBmaWcud2lkdGggPSA3LCBmaWcuaGVpZ2h0ID0gNC41LCBkcGkgPSAxMTAsCiAgICAgICAgICAgICAgICAgICAgICBtZXNzYWdlID0gRkFMU0UpCmxpYnJhcnkoZ2dwbG90MikKbGlicmFyeShSQ29sb3JCcmV3ZXIpCmxpYnJhcnkoTUFTUykKcGFsIDwtIGJyZXdlci5wYWwoOCwgIlBhaXJlZCIpCnRoZW1lX3NldCh0aGVtZV9idyhiYXNlX3NpemUgPSAxMykpCmBgYAoKKlNlc3Npb24gMTQgb2YgdGhlIFtjb3Vyc2VdKGluZGV4Lmh0bWwpIMK3IFtTbGlkZXMgZm9yIHRoaXMgc2Vzc2lvbiAoUERGKV0oc2xpZGVzLzE0LWdlbmVyYWxpc2VkLWxpbmVhci1tb2RlbHMucGRmKSoKCioqTGVhcm5pbmcgZ29hbHMuKiogQWZ0ZXIgdGhpcyBsZXNzb24geW91IGNhbgoKLSBleHBsYWluIHdoeSBhIGxpbmVhciBtb2RlbCBpcyB1bnN1aXRhYmxlIGZvciBhIGJpbmFyeSBvdXRjb21lOwotIGV4cGxhaW4gdGhlIGlkZWEgb2YgbWF4aW11bSBsaWtlbGlob29kIGVzdGltYXRpb247Ci0gZml0IGEgbG9naXN0aWMgcmVncmVzc2lvbiBhbmQgaW50ZXJwcmV0IGl0cyBjb2VmZmljaWVudHMgYXMgb2RkcyByYXRpb3M7Ci0gdHVybiBwcmVkaWN0ZWQgcHJvYmFiaWxpdGllcyBpbnRvIGNsYXNzaWZpY2F0aW9ucyBhbmQgZXZhbHVhdGUgdGhlbSBvbiBuZXcgZGF0YS4KCiMjIFRoZSBkYXRhCgpUaGUgYFBpbWEudHJgIGFuZCBgUGltYS50ZWAgZGF0YSBzZXRzIGluIHRoZSBgTUFTU2AgcGFja2FnZSBjb21lIGZyb20gYSBzdHVkeSBvZgp3b21lbiBvZiBQaW1hIEluZGlhbiBoZXJpdGFnZSBhZ2VkIDIxIG9yIG9sZGVyLiBUaGUgb3V0Y29tZSBgdHlwZWAgcmVjb3Jkcwp3aGV0aGVyIGEgd29tYW4gaGFzIGRpYWJldGVzLiBXZSB1c2UgYFBpbWEudHJgICgyMDAgd29tZW4pIHRvIGZpdCBtb2RlbHMgYW5kCmBQaW1hLnRlYCAoMzMyIHdvbWVuKSB0byB0ZXN0IHRoZW0uCgpgYGB7ciBkYXRhfQp0cmFpbiA8LSBQaW1hLnRyCnRlc3QgIDwtIFBpbWEudGUKdHJhaW4kZGlhYmV0ZXMgPC0gYXMuaW50ZWdlcih0cmFpbiR0eXBlID09ICJZZXMiKQp0ZXN0JGRpYWJldGVzICA8LSBhcy5pbnRlZ2VyKHRlc3QkdHlwZSA9PSAiWWVzIikKaGVhZCh0cmFpbikKbWVhbih0cmFpbiRkaWFiZXRlcykKYGBgCgpMZXQgdXMgc3RhcnQgd2l0aCBvbmUgcHJlZGljdG9yOiBwbGFzbWEgZ2x1Y29zZSBjb25jZW50cmF0aW9uIChgZ2x1YCkgZnJvbSBhbgpvcmFsIGdsdWNvc2UgdG9sZXJhbmNlIHRlc3QuIEJlY2F1c2UgdGhlIG91dGNvbWUgaXMgMCBvciAxLCBtYW55IHBvaW50cyBvdmVybGFwLgpBZGRpbmcgYSBsaXR0bGUgcmFuZG9tIG5vaXNlICgqaml0dGVyaW5nKikgbWFrZXMgdGhlbSB2aXNpYmxlOgoKYGBge3IgcGxvdC1kYXRhfQpwIDwtIGdncGxvdCh0cmFpbiwgYWVzKGdsdSwgZGlhYmV0ZXMpKSArCiAgZ2VvbV9qaXR0ZXIod2lkdGggPSAwLCBoZWlnaHQgPSAwLjA1LCBhbHBoYSA9IDAuNSkgKwogIGxhYnMoeCA9ICJQbGFzbWEgZ2x1Y29zZSIsIHkgPSAiRGlhYmV0ZXMgKDEgPSB5ZXMpIikKcApgYGAKCiMjIFdoeSBub3QgYSBzdHJhaWdodCBsaW5lPwoKYGBge3IgbGluZWFyLWZpdH0KcCArIGdlb21fc21vb3RoKG1ldGhvZCA9ICJsbSIsIHNlID0gRkFMU0UsIGNvbG91ciA9IHBhbFs2XSkKYGBgCgpBIHN0cmFpZ2h0IGxpbmUgcHJlZGljdHMgInByb2JhYmlsaXRpZXMiIGJlbG93IDAgYW5kIGFib3ZlIDEgYXQgdGhlIGV4dHJlbWVzLAphbmQgYXNzdW1lcyB0aGF0IGVhY2ggZXh0cmEgdW5pdCBvZiBnbHVjb3NlIGNoYW5nZXMgdGhlIHByb2JhYmlsaXR5IGJ5IHRoZSBzYW1lCmFtb3VudCBldmVyeXdoZXJlLiBMb2dpc3RpYyByZWdyZXNzaW9uIGluc3RlYWQgbW9kZWxzIHRoZSAqKmxvZy1vZGRzKio6CgokJFxsb2dcZnJhY3twfXsxLXB9ID0gXGJldGFfMCArIFxiZXRhXzEgeCwgXHFxdWFkCnAgPSBcZnJhY3sxfXsxICsgZV57LShcYmV0YV8wICsgXGJldGFfMSB4KX19LiQkCgpUaGUgUy1zaGFwZWQgY3VydmUgYWx3YXlzIHN0YXlzIGJldHdlZW4gMCBhbmQgMS4KCiMjIEhvdyBhcmUgdGhlIGNvZWZmaWNpZW50cyBlc3RpbWF0ZWQ/IE1heGltdW0gbGlrZWxpaG9vZAoKTGVhc3Qgc3F1YXJlcyBpcyBubyBsb25nZXIgYXBwcm9wcmlhdGUsIHNvIGxvZ2lzdGljIHJlZ3Jlc3Npb24gdXNlcyAqKm1heGltdW0KbGlrZWxpaG9vZCoqOiBjaG9vc2UgdGhlIHBhcmFtZXRlciB2YWx1ZXMgdW5kZXIgd2hpY2ggdGhlIG9ic2VydmVkIGRhdGEgYXJlCm1vc3QgbGlrZWx5LiBGb3IgaW5kZXBlbmRlbnQgb2JzZXJ2YXRpb25zICR6XzEsIFxkb3RzLCB6X24kIHRoZSBsaWtlbGlob29kIGlzCgokJEwoXHRoZXRhKSA9IFxwcm9kX3tpPTF9XntufSBmKHpfaSBcbWlkIFx0aGV0YSksIFxxcXVhZApcbG9nIEwoXHRoZXRhKSA9IFxzdW1fe2k9MX1ee259IFxsb2cgZih6X2kgXG1pZCBcdGhldGEpLiQkCgoqKkNvbXBhcmluZyB0d28gZXhwbGFuYXRpb25zLioqIFdlIG9ic2VydmUgdGhlIHZhbHVlcyAwIGFuZCAzIGFuZCBwcm9wb3NlIHRoYXQKdGhleSBjb21lIGVpdGhlciBmcm9tICROKDEsIDJeMikkIG9yIGZyb20gJE4oMiwgMV4yKSQuIFdoaWNoIGV4cGxhbmF0aW9uIG1ha2VzCnRoZSBkYXRhIG1vcmUgbGlrZWx5PwoKYGBge3IgbWwtY29tcGFyZX0KeCA8LSBjKDAsIDMpCmMoIk4oMSwgMikiID0gc3VtKGRub3JtKHgsIG1lYW4gPSAxLCBzZCA9IDIsIGxvZyA9IFRSVUUpKSwKICAiTigyLCAxKSIgPSBzdW0oZG5vcm0oeCwgbWVhbiA9IDIsIHNkID0gMSwgbG9nID0gVFJVRSkpKQpgYGAKClRoZSBsb2ctbGlrZWxpaG9vZCBpcyBoaWdoZXIgZm9yICROKDEsIDJeMikkOiB0aGUgd2lkZXIgZGlzdHJpYnV0aW9uIGFjY291bnRzCmJldHRlciBmb3IgdHdvIG9ic2VydmF0aW9ucyB0aGF0IGxpZSBmYXIgYXBhcnQuCgoqKlNlYXJjaGluZyBvdmVyIGFsbCB2YWx1ZXMuKiogU3VwcG9zZSA2IG9mIDEwIHBhdGllbnRzIHJlc3BvbmQgdG8gYSB0cmVhdG1lbnQuClRoZSBsaWtlbGlob29kIG9mIGEgcmVzcG9uc2UgcHJvYmFiaWxpdHkgJHAkIGlzICRwXjYoMS1wKV40JDoKCmBgYHtyIG1sLWN1cnZlLCBmaWcuaGVpZ2h0ID0gMy44fQpwX2dyaWQgPC0gc2VxKDAuMDEsIDAuOTksIDAuMDEpCmxvZ2xpayA8LSA2ICogbG9nKHBfZ3JpZCkgKyA0ICogbG9nKDEgLSBwX2dyaWQpCnBsb3QocF9ncmlkLCBsb2dsaWssIHR5cGUgPSAibCIsIGx3ZCA9IDIsIGNvbCA9IHBhbFsyXSwKICAgICB4bGFiID0gInAiLCB5bGFiID0gImxvZy1saWtlbGlob29kIikKYWJsaW5lKHYgPSBwX2dyaWRbd2hpY2gubWF4KGxvZ2xpayldLCBsdHkgPSAyKQpwX2dyaWRbd2hpY2gubWF4KGxvZ2xpayldCmBgYAoKVGhlIG1heGltdW0gaXMgYXQgJHAgPSAwLjYkLCB0aGUgb2JzZXJ2ZWQgcHJvcG9ydGlvbi4gYGdsbSgpYCBkb2VzIHRoZSBzYW1lIGZvcgp0aGUgY29lZmZpY2llbnRzIG9mIGEgbG9naXN0aWMgcmVncmVzc2lvbiwgc2VhcmNoaW5nIG51bWVyaWNhbGx5IGZvciB0aGUgdmFsdWVzCnRoYXQgbWF4aW1pc2UgdGhlIGxpa2VsaWhvb2Qgb2YgdGhlIG9ic2VydmVkIG91dGNvbWVzLgoKIyMgRml0dGluZyB0aGUgbW9kZWwKCmBgYHtyIGdsbX0KZml0IDwtIGdsbShkaWFiZXRlcyB+IGdsdSwgZGF0YSA9IHRyYWluLCBmYW1pbHkgPSBiaW5vbWlhbCkKc3VtbWFyeShmaXQpCmBgYAoKYGBge3IgZ2xtLXBsb3R9CnAgKyBnZW9tX3Ntb290aChtZXRob2QgPSAiZ2xtIiwgbWV0aG9kLmFyZ3MgPSBsaXN0KGZhbWlseSA9IGJpbm9taWFsKSwKICAgICAgICAgICAgICAgIGNvbG91ciA9IHBhbFsyXSkKYGBgCgojIyMgSW50ZXJwcmV0aW5nIHRoZSBjb2VmZmljaWVudHMKClRoZSBzbG9wZSBpcyBhIGNoYW5nZSBpbiBsb2ctb2Rkcywgd2hpY2ggaXMgaGFyZCB0byBpbnRlcnByZXQgZGlyZWN0bHkuCkV4cG9uZW50aWF0aW5nIGl0IGdpdmVzIGFuICoqb2RkcyByYXRpbyoqOgoKYGBge3Igb2Rkcy1yYXRpb30KZXhwKGNvZWYoZml0KSkKZXhwKGNvbmZpbnQoZml0KSkKYGBgCgpFYWNoIGFkZGl0aW9uYWwgdW5pdCBvZiBnbHVjb3NlIG11bHRpcGxpZXMgdGhlIG9kZHMgb2YgZGlhYmV0ZXMgYnkgYWJvdXQKYHIgcm91bmQoZXhwKGNvZWYoZml0KVsyXSksIDMpYC4gRm9yIGEgMTAtdW5pdCBkaWZmZXJlbmNlIHRoZSBvZGRzIGFyZQptdWx0aXBsaWVkIGJ5ICRgciByb3VuZChleHAoY29lZihmaXQpWzJdKSwgMylgXnsxMH0gXGFwcHJveCBgciByb3VuZChleHAoMTAgKiBjb2VmKGZpdClbMl0pLCAyKWAkLgoKQXQgd2hpY2ggZ2x1Y29zZSBsZXZlbCBpcyB0aGUgcHJlZGljdGVkIHByb2JhYmlsaXR5IGV4YWN0bHkgMC41PyBUaGVuIHRoZQpsb2ctb2RkcyBhcmUgemVybywgc28gJHggPSAtXGJldGFfMC9cYmV0YV8xJDoKCmBgYHtyIHAtaGFsZn0KLWNvZWYoZml0KVsxXSAvIGNvZWYoZml0KVsyXQpgYGAKCiMjIFNldmVyYWwgcHJlZGljdG9ycwoKYGBge3IgZ2xtLW11bHRpfQpmaXQyIDwtIGdsbShkaWFiZXRlcyB+IGdsdSArIGJtaSArIGFnZSArIHBlZCwgZGF0YSA9IHRyYWluLCBmYW1pbHkgPSBiaW5vbWlhbCkKcm91bmQoY2JpbmQob2Rkc19yYXRpbyA9IGV4cChjb2VmKGZpdDIpKSwgZXhwKGNvbmZpbnQoZml0MikpKSwgMykKYGBgCgpFYWNoIG9kZHMgcmF0aW8gbm93IGNvbXBhcmVzIHdvbWVuIHdobyBkaWZmZXIgaW4gb25lIHByZWRpY3RvciB3aGlsZSB0aGUgb3RoZXJzCmFyZSBoZWxkIGNvbnN0YW50LiBgcGVkYCBpcyBhIGRpYWJldGVzIHBlZGlncmVlIGZ1bmN0aW9uLCBhIHNjb3JlIHN1bW1hcmlzaW5nCmZhbWlseSBoaXN0b3J5IG9mIGRpYWJldGVzLgoKIyMgRnJvbSBwcm9iYWJpbGl0aWVzIHRvIGNsYXNzaWZpY2F0aW9ucwoKYHByZWRpY3QoLi4uLCB0eXBlID0gInJlc3BvbnNlIilgIHJldHVybnMgcHJlZGljdGVkIHByb2JhYmlsaXRpZXMuIEEgY29tbW9uCihidXQgbm90IG9ibGlnYXRvcnkpIHJ1bGUgY2xhc3NpZmllcyBhIHdvbWFuIGFzICJkaWFiZXRlcyIgd2hlbiB0aGUgcHJvYmFiaWxpdHkKZXhjZWVkcyAwLjUuIEEgZmFpciB0ZXN0IG9mIGEgbW9kZWwgdXNlcyBkYXRhIHRoYXQgd2VyZSAqKm5vdCoqIHVzZWQgdG8gZml0IGl0OgoKYGBge3IgcHJlZGljdH0KdGVzdCRwcm9iIDwtIHByZWRpY3QoZml0MiwgbmV3ZGF0YSA9IHRlc3QsIHR5cGUgPSAicmVzcG9uc2UiKQp0ZXN0JHByZWQgPC0gYXMuaW50ZWdlcih0ZXN0JHByb2IgPiAwLjUpCnRhYmxlKHByZWRpY3RlZCA9IHRlc3QkcHJlZCwgb2JzZXJ2ZWQgPSB0ZXN0JGRpYWJldGVzKQptZWFuKHRlc3QkcHJlZCA9PSB0ZXN0JGRpYWJldGVzKSAgICMgYWNjdXJhY3kKYGBgCgpgYGB7ciBzZW5zLXNwZWN9CmMoc2Vuc2l0aXZpdHkgPSBtZWFuKHRlc3QkcHJlZFt0ZXN0JGRpYWJldGVzID09IDFdID09IDEpLAogIHNwZWNpZmljaXR5ID0gbWVhbih0ZXN0JHByZWRbdGVzdCRkaWFiZXRlcyA9PSAwXSA9PSAwKSkKYGBgCgpBY2N1cmFjeSBhbG9uZSBoaWRlcyBhbiBpbXBvcnRhbnQgdHJhZGUtb2ZmLiAqKlNlbnNpdGl2aXR5KiogaXMgdGhlIHByb3BvcnRpb24Kb2Ygd29tZW4gd2l0aCBkaWFiZXRlcyB3aG8gYXJlIGNvcnJlY3RseSBpZGVudGlmaWVkOyAqKnNwZWNpZmljaXR5KiogaXMgdGhlCnByb3BvcnRpb24gd2l0aG91dCBkaWFiZXRlcyB3aG8gYXJlIGNvcnJlY3RseSBpZGVudGlmaWVkLiBMb3dlcmluZyB0aGUKdGhyZXNob2xkIHJhaXNlcyBzZW5zaXRpdml0eSBhbmQgbG93ZXJzIHNwZWNpZmljaXR5LiBXaGljaCBiYWxhbmNlIGlzCmFjY2VwdGFibGUgZGVwZW5kcyBvbiB0aGUgY29zdCBvZiBtaXNzaW5nIGEgY2FzZSBjb21wYXJlZCB3aXRoIHRoZSBjb3N0IG9mIGEKZmFsc2UgYWxhcm0uCgojIyBUcnkgaXQgeW91cnNlbGYKCjEuIENoYW5nZSB0aGUgY2xhc3NpZmljYXRpb24gdGhyZXNob2xkIHRvIDAuMy4gSG93IGRvIHNlbnNpdGl2aXR5IGFuZAogICBzcGVjaWZpY2l0eSBjaGFuZ2U/IFdoZW4gbWlnaHQgYSBzY3JlZW5pbmcgcHJvZ3JhbW1lIHByZWZlciB0aGlzIHRocmVzaG9sZD8KMi4gQ29tcHV0ZSBhY2N1cmFjeSBvbiB0aGUgKnRyYWluaW5nKiBkYXRhIGFuZCBjb21wYXJlIGl0IHdpdGggdGhlIHRlc3QgZGF0YS4KICAgV2h5IGlzIHRoZSB0cmFpbmluZyBhY2N1cmFjeSBhIHRvbyBvcHRpbWlzdGljIGVzdGltYXRlPwozLiBVc2luZyB0aGUgYnVpbHQtaW4gYG10Y2Fyc2AgZGF0YSwgbW9kZWwgdHJhbnNtaXNzaW9uIHR5cGUgKGBhbWAsIDEgPSBtYW51YWwpCiAgIHdpdGggYG1wZ2AgYW5kIGBocGAuIEludGVycHJldCB0aGUgb2RkcyByYXRpbyBmb3IgYGhwYC4K</div>
+<hr>
+<p style="font-size:0.85em;color:#666">Jiayun Jin · Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the MIT License.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("05-logistic-regression.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

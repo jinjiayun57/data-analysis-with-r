@@ -1,0 +1,180 @@
+---
+title: "Logistic regression"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 4.5, dpi = 110,
+                      message = FALSE)
+library(ggplot2)
+library(RColorBrewer)
+library(MASS)
+pal <- brewer.pal(8, "Paired")
+theme_set(theme_bw(base_size = 13))
+```
+
+*Session 14 of the [course](index.html) · [Slides for this session (PDF)](slides/14-generalised-linear-models.pdf)*
+
+**Learning goals.** After this lesson you can
+
+- explain why a linear model is unsuitable for a binary outcome;
+- explain the idea of maximum likelihood estimation;
+- fit a logistic regression and interpret its coefficients as odds ratios;
+- turn predicted probabilities into classifications and evaluate them on new data.
+
+## The data
+
+The `Pima.tr` and `Pima.te` data sets in the `MASS` package come from a study of
+women of Pima Indian heritage aged 21 or older. The outcome `type` records
+whether a woman has diabetes. We use `Pima.tr` (200 women) to fit models and
+`Pima.te` (332 women) to test them.
+
+```{r data}
+train <- Pima.tr
+test  <- Pima.te
+train$diabetes <- as.integer(train$type == "Yes")
+test$diabetes  <- as.integer(test$type == "Yes")
+head(train)
+mean(train$diabetes)
+```
+
+Let us start with one predictor: plasma glucose concentration (`glu`) from an
+oral glucose tolerance test. Because the outcome is 0 or 1, many points overlap.
+Adding a little random noise (*jittering*) makes them visible:
+
+```{r plot-data}
+p <- ggplot(train, aes(glu, diabetes)) +
+  geom_jitter(width = 0, height = 0.05, alpha = 0.5) +
+  labs(x = "Plasma glucose", y = "Diabetes (1 = yes)")
+p
+```
+
+## Why not a straight line?
+
+```{r linear-fit}
+p + geom_smooth(method = "lm", se = FALSE, colour = pal[6])
+```
+
+A straight line predicts "probabilities" below 0 and above 1 at the extremes,
+and assumes that each extra unit of glucose changes the probability by the same
+amount everywhere. Logistic regression instead models the **log-odds**:
+
+$$\log\frac{p}{1-p} = \beta_0 + \beta_1 x, \qquad
+p = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x)}}.$$
+
+The S-shaped curve always stays between 0 and 1.
+
+## How are the coefficients estimated? Maximum likelihood
+
+Least squares is no longer appropriate, so logistic regression uses **maximum
+likelihood**: choose the parameter values under which the observed data are
+most likely. For independent observations $z_1, \dots, z_n$ the likelihood is
+
+$$L(\theta) = \prod_{i=1}^{n} f(z_i \mid \theta), \qquad
+\log L(\theta) = \sum_{i=1}^{n} \log f(z_i \mid \theta).$$
+
+**Comparing two explanations.** We observe the values 0 and 3 and propose that
+they come either from $N(1, 2^2)$ or from $N(2, 1^2)$. Which explanation makes
+the data more likely?
+
+```{r ml-compare}
+x <- c(0, 3)
+c("N(1, 2)" = sum(dnorm(x, mean = 1, sd = 2, log = TRUE)),
+  "N(2, 1)" = sum(dnorm(x, mean = 2, sd = 1, log = TRUE)))
+```
+
+The log-likelihood is higher for $N(1, 2^2)$: the wider distribution accounts
+better for two observations that lie far apart.
+
+**Searching over all values.** Suppose 6 of 10 patients respond to a treatment.
+The likelihood of a response probability $p$ is $p^6(1-p)^4$:
+
+```{r ml-curve, fig.height = 3.8}
+p_grid <- seq(0.01, 0.99, 0.01)
+loglik <- 6 * log(p_grid) + 4 * log(1 - p_grid)
+plot(p_grid, loglik, type = "l", lwd = 2, col = pal[2],
+     xlab = "p", ylab = "log-likelihood")
+abline(v = p_grid[which.max(loglik)], lty = 2)
+p_grid[which.max(loglik)]
+```
+
+The maximum is at $p = 0.6$, the observed proportion. `glm()` does the same for
+the coefficients of a logistic regression, searching numerically for the values
+that maximise the likelihood of the observed outcomes.
+
+## Fitting the model
+
+```{r glm}
+fit <- glm(diabetes ~ glu, data = train, family = binomial)
+summary(fit)
+```
+
+```{r glm-plot}
+p + geom_smooth(method = "glm", method.args = list(family = binomial),
+                colour = pal[2])
+```
+
+### Interpreting the coefficients
+
+The slope is a change in log-odds, which is hard to interpret directly.
+Exponentiating it gives an **odds ratio**:
+
+```{r odds-ratio}
+exp(coef(fit))
+exp(confint(fit))
+```
+
+Each additional unit of glucose multiplies the odds of diabetes by about
+`r round(exp(coef(fit)[2]), 3)`. For a 10-unit difference the odds are
+multiplied by $`r round(exp(coef(fit)[2]), 3)`^{10} \approx `r round(exp(10 * coef(fit)[2]), 2)`$.
+
+At which glucose level is the predicted probability exactly 0.5? Then the
+log-odds are zero, so $x = -\beta_0/\beta_1$:
+
+```{r p-half}
+-coef(fit)[1] / coef(fit)[2]
+```
+
+## Several predictors
+
+```{r glm-multi}
+fit2 <- glm(diabetes ~ glu + bmi + age + ped, data = train, family = binomial)
+round(cbind(odds_ratio = exp(coef(fit2)), exp(confint(fit2))), 3)
+```
+
+Each odds ratio now compares women who differ in one predictor while the others
+are held constant. `ped` is a diabetes pedigree function, a score summarising
+family history of diabetes.
+
+## From probabilities to classifications
+
+`predict(..., type = "response")` returns predicted probabilities. A common
+(but not obligatory) rule classifies a woman as "diabetes" when the probability
+exceeds 0.5. A fair test of a model uses data that were **not** used to fit it:
+
+```{r predict}
+test$prob <- predict(fit2, newdata = test, type = "response")
+test$pred <- as.integer(test$prob > 0.5)
+table(predicted = test$pred, observed = test$diabetes)
+mean(test$pred == test$diabetes)   # accuracy
+```
+
+```{r sens-spec}
+c(sensitivity = mean(test$pred[test$diabetes == 1] == 1),
+  specificity = mean(test$pred[test$diabetes == 0] == 0))
+```
+
+Accuracy alone hides an important trade-off. **Sensitivity** is the proportion
+of women with diabetes who are correctly identified; **specificity** is the
+proportion without diabetes who are correctly identified. Lowering the
+threshold raises sensitivity and lowers specificity. Which balance is
+acceptable depends on the cost of missing a case compared with the cost of a
+false alarm.
+
+## Try it yourself
+
+1. Change the classification threshold to 0.3. How do sensitivity and
+   specificity change? When might a screening programme prefer this threshold?
+2. Compute accuracy on the *training* data and compare it with the test data.
+   Why is the training accuracy a too optimistic estimate?
+3. Using the built-in `mtcars` data, model transmission type (`am`, 1 = manual)
+   with `mpg` and `hp`. Interpret the odds ratio for `hp`.

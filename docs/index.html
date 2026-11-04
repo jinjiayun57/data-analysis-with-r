@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data Analysis with R</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.1/jquery-3.6.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Course</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-probability-and-simulation.html">Probability and simulation</a>
+    </li>
+    <li>
+      <a href="02-confidence-intervals.html">Parameter estimation and confidence intervals</a>
+    </li>
+    <li>
+      <a href="03-hypothesis-testing.html">Hypothesis testing</a>
+    </li>
+    <li>
+      <a href="04-linear-regression.html">Correlation and linear regression</a>
+    </li>
+    <li>
+      <a href="05-logistic-regression.html">Logistic regression</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jinjiayun57/data-analysis-with-r">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Data Analysis with R</h1>
+<h3 class="subtitle">An introductory statistics course for students from
+any discipline</h3>
+
+</div>
+
+
+<style>
+.module { margin-top: 1.6em; }
+.session { border-left: 4px solid #d5dbe3; padding: 0.4em 0.6em 0.4em 0.9em; margin: 0.6em 0; }
+.session p { margin: 0.2em 0; }
+.session.full { border-left-color: #18bc9c; background: #f4fbf9; }
+.stitle { font-weight: 600; font-size: 1.05em; color: #2c3e50; }
+.session p { margin: 0.15em 0; }
+.small { display:block; }
+.tag { display: inline-block; font-size: 0.75em; font-weight: 600; padding: 0.05em 0.5em;
+       border-radius: 3px; background: #18bc9c; color: white; margin-left: 0.4em; vertical-align: middle; }
+.small { color: #555; font-size: 0.92em; }
+</style>
+<div id="course-overview" class="section level2">
+<h2>Course overview</h2>
+<p><em>Data Analysis with R</em> is an undergraduate course I designed
+and introduced at Renmin University of China. I taught it in spring 2024
+and again, revised, in spring 2025. It was offered as an elective open
+to students from across the university, with classes of up to 68
+students. A single class could include students of music, journalism,
+sociology, statistics and physics. Most had little mathematical
+background and had never programmed.</p>
+<p><strong>Course goals.</strong> By the end of the course, students
+can</p>
+<ul>
+<li>import, clean and manage a data set in R;</li>
+<li>describe and visualise data appropriately for the type of
+variable;</li>
+<li>explain the logic of estimation and hypothesis testing, and apply
+them;</li>
+<li>fit, interpret and critically evaluate linear and logistic
+regression models;</li>
+<li>report an analysis of their own data, with code, results and
+interpretation.</li>
+</ul>
+</div>
+<div id="approach" class="section level2">
+<h2>Approach</h2>
+<p>Each session follows the same pattern:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Start from something students can observe.</strong> Before a
+formula appears, students run a small simulation or look at a plot and
+describe what they see.</li>
+<li><strong>Connect the observation to the formal idea.</strong> The
+definition or theorem then explains a pattern that students have already
+seen for themselves.</li>
+<li><strong>Practise with data.</strong> Short exercises ask students to
+change the code and reason about what happens, first on simulated data,
+then on real data.</li>
+</ol>
+<p>Each session opens with a concept map that reviews the previous
+session and places the new topic in the structure of the course, and
+closes with a summary map, so that students see how the methods build on
+each other.</p>
+<p>The classroom is meant as a place where students can voice their
+opinions and discuss openly without fear of judgement; the teacher’s
+role is that of a facilitator.</p>
+<p>R is used both for data analysis and as a laboratory for statistical
+ideas: coverage rates, sampling distributions and error rates become
+things students can count, not only definitions to memorise.</p>
+</div>
+<div id="course-map" class="section level2">
+<h2>Course map</h2>
+<figure style="margin: 1em 0 1.5em 0;">
+<img src="images/course-map.png" alt="Course map: five modules and sixteen sessions. Module 1, working with R and data: sessions 1 to 4. Module 2, probability and inference: sessions 5 to 7. Module 3, describing and visualising data: sessions 8 and 9. Module 4, statistical models: sessions 10 to 14. Module 5, bringing it together: sessions 15 and 16. Sessions 5, 6, 7, 10 and 14 are full lessons." style="width:100%; max-width:900px;">
+</figure>
+<p>Sixteen weekly sessions, in the order in which they were taught. Each
+teaching session links to its slides; sessions marked <span
+class="tag">full lesson</span> are also available as complete lessons
+with code, simulations, explanations and exercises.</p>
+<div id="module-1-working-with-r-and-data" class="section level3">
+<h3>Module 1 · Working with R and data</h3>
+<div class="session">
+<p><span class="stitle">1. Getting started with R</span></p>
+<p><strong>Objectives:</strong> run code in RStudio, work with objects,
+scripts and packages, and reproduce a first small analysis.</p>
+<p><span class="small">Topics: why R, R and RStudio, the workspace,
+packages, reusing output as input, a worked example.</span></p>
+<p>→ <a href="slides/01-getting-started-with-r.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">2. Data structures and creating data
+sets</span></p>
+<p><strong>Objectives:</strong> choose an appropriate data structure and
+create or import a data set.</p>
+<p><span class="small">Topics: vectors, matrices, arrays, data frames,
+factors and lists; types of variables; entering data; importing
+spreadsheets.</span></p>
+<p>→ <a href="slides/02-creating-a-data-set.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">3. Data management I</span></p>
+<p><strong>Objectives:</strong> create and recode variables, and detect
+and handle missing values.</p>
+<p><span class="small">Topics: arithmetic and logical operators,
+recoding a continuous variable into categories, renaming,
+<code>ifelse()</code>, missing values, type conversions.</span></p>
+<p>→ <a href="slides/03-data-management-1.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">4. Data management II</span></p>
+<p><strong>Objectives:</strong> prepare an analysis data set from raw
+data.</p>
+<p><span class="small">Topics: sorting, merging and subsetting data
+sets; a comprehensive exercise covering all data management steps, with
+solutions.</span></p>
+<p>→ <a href="slides/04-data-management-2.pdf">Slides (PDF)</a></p>
+</div>
+</div>
+<div id="module-2-probability-and-inference" class="section level3">
+<h3>Module 2 · Probability and inference</h3>
+<div class="session full">
+<p><span class="stitle">5. Probability and simulation</span> <span
+class="tag">full lesson</span></p>
+<p><strong>Objectives:</strong> understand probability as long-run
+frequency, work with common distributions, and see the central limit
+theorem happen.</p>
+<p><span class="small">Topics: law of large numbers, binomial, Poisson
+and normal distributions, <code>d/p/q/r</code> functions, sampling
+distribution of the mean.</span></p>
+<p>→ <a href="01-probability-and-simulation.html">Open the lesson</a> ·
+<a href="slides/05-probability-and-distributions.pdf">Slides
+(PDF)</a></p>
+</div>
+<div class="session full">
+<p><span class="stitle">6. Parameter estimation and confidence
+intervals</span> <span class="tag">full lesson</span></p>
+<p><strong>Objectives:</strong> explain what “95% confidence” refers to,
+and compute and interpret confidence intervals.</p>
+<p><span class="small">Topics: chi-square, t and F distributions, the
+central limit theorem, point and interval estimation, repeated sampling
+and coverage.</span></p>
+<p>→ <a href="02-confidence-intervals.html">Open the lesson</a> · <a
+href="slides/06-parameter-estimation.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session full">
+<p><span class="stitle">7. Hypothesis testing</span> <span
+class="tag">full lesson</span></p>
+<p><strong>Objectives:</strong> formulate hypotheses, compute test
+statistics and p-values, and explain what the significance level
+controls.</p>
+<p><span class="small">Topics: rejection regions, z- and t-tests, one-
+and two-sided tests, Type I and Type II errors, error rates and power by
+simulation.</span></p>
+<p>→ <a href="03-hypothesis-testing.html">Open the lesson</a> · <a
+href="slides/07-hypothesis-testing.pdf">Slides (PDF)</a></p>
+</div>
+</div>
+<div id="module-3-describing-and-visualising-data"
+class="section level3">
+<h3>Module 3 · Describing and visualising data</h3>
+<div class="session">
+<p><span class="stitle">8. Graphs for categorical and numerical
+data</span></p>
+<p><strong>Objectives:</strong> choose a graph that matches the type of
+variable and the question.</p>
+<p><span class="small">Topics: contingency tables, bar charts and spine
+plots, pie and fan charts, histograms and density curves, box and violin
+plots, scatter plots; an exercise on the <code>iris</code>
+data.</span></p>
+<p>→ <a href="slides/08-graphs.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">9. Descriptive statistics</span></p>
+<p><strong>Objectives:</strong> summarise the centre, spread and shape
+of a distribution and choose suitable measures.</p>
+<p><span class="small">Topics: mean, median, mode and quantiles;
+variance, standard deviation and coefficient of variation; standard
+scores; skewness and kurtosis. The group project is introduced in this
+session.</span></p>
+<p>→ <a href="slides/09-descriptive-statistics.pdf">Slides (PDF)</a></p>
+</div>
+</div>
+<div id="module-4-statistical-models" class="section level3">
+<h3>Module 4 · Statistical models</h3>
+<div class="session full">
+<p><span class="stitle">10. Correlation and linear regression</span>
+<span class="tag">full lesson</span></p>
+<p><strong>Objectives:</strong> fit, interpret and check simple and
+multiple regression models.</p>
+<p><span class="small">Topics: Pearson and Spearman correlation,
+correlation versus causation, least squares, diagnostic plots,
+polynomial terms, the bias–variance trade-off, variable selection,
+multicollinearity.</span></p>
+<p>→ <a href="04-linear-regression.html">Open the lesson</a> · <a
+href="slides/10-regression.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">11. Group presentations</span></p>
+<p><strong>Objectives:</strong> present an analysis of a self-chosen
+data set and answer questions from peers.</p>
+</div>
+<div class="session">
+<p><span class="stitle">12. Categorical data: chi-square
+tests</span></p>
+<p><strong>Objectives:</strong> test goodness of fit and independence,
+and check R’s results by hand.</p>
+<p><span class="small">Topics: contingency tables, expected counts, the
+chi-square distribution, <code>chisq.test()</code>, an application to
+survey data on gender attitudes.</span></p>
+<p>→ <a href="slides/12-chi-square-tests.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session">
+<p><span class="stitle">13. Comparing groups: analysis of
+variance</span></p>
+<p><strong>Objectives:</strong> explain ANOVA as a comparison of
+between- and within-group variation, and follow up on a significant
+result.</p>
+<p><span class="small">Topics: simulated groups with small and large
+within- and between-group variance, sums of squares, the F test, Tukey’s
+HSD, Levene’s test, the Kruskal–Wallis test.</span></p>
+<p>→ <a href="slides/13-anova.pdf">Slides (PDF)</a></p>
+</div>
+<div class="session full">
+<p><span class="stitle">14. Generalised linear models: logistic
+regression</span> <span class="tag">full lesson</span></p>
+<p><strong>Objectives:</strong> model a binary outcome, interpret odds
+ratios and evaluate predictions on new data.</p>
+<p><span class="small">Topics: maximum likelihood, AIC and BIC, log-odds
+and odds ratios, predicted probabilities, classification, sensitivity
+and specificity.</span></p>
+<p>→ <a href="05-logistic-regression.html">Open the lesson</a> · <a
+href="slides/14-generalised-linear-models.pdf">Slides (PDF)</a></p>
+</div>
+</div>
+<div id="module-5-bringing-it-together" class="section level3">
+<h3>Module 5 · Bringing it together</h3>
+<div class="session">
+<p><span class="stitle">15. Review and next steps</span></p>
+<p><strong>Objectives:</strong> connect the methods of the course and
+look ahead to <code>ggplot2</code> and to data science more broadly.</p>
+<p><span class="small">Topics: a concept map of the whole course,
+choosing a method by the type of outcome and predictor,
+<code>ggplot2</code>, data science more broadly.</span></p>
+</div>
+<div class="session">
+<p><span class="stitle">16. Examination</span></p>
+<p><strong>Objectives:</strong> apply the course methods independently
+to short analysis problems in R, in an open-note examination.</p>
+</div>
+</div>
+<div id="how-the-methods-fit-together" class="section level3">
+<h3>How the methods fit together</h3>
+<p>The last session on models brings the methods together by the type of
+outcome and predictor:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Outcome</th>
+<th>Predictor</th>
+<th>Method in this course</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Categorical</td>
+<td>Categorical</td>
+<td>Chi-square test (session 12)</td>
+</tr>
+<tr class="even">
+<td>Numerical</td>
+<td>Categorical</td>
+<td>t-test, analysis of variance (sessions 7 and 13)</td>
+</tr>
+<tr class="odd">
+<td>Numerical</td>
+<td>Numerical</td>
+<td>Simple, multiple and polynomial regression (session 10)</td>
+</tr>
+<tr class="even">
+<td>Binary or otherwise non-normal</td>
+<td>Any</td>
+<td>Generalised linear models, e.g. logistic regression (session
+14)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="assessment-and-course-design" class="section level2">
+<h2>Assessment and course design</h2>
+<p>The final grade combines <strong>coursework (40%)</strong> and an
+<strong>open-note examination (60%)</strong>.</p>
+<ul>
+<li><strong>Exercises in every session.</strong> Sessions end with tasks
+that ask students to modify the code and explain the result in words;
+longer exercises, such as the data management exercise in session 4,
+come with worked solutions.</li>
+<li><strong>Group project.</strong> In groups of four to six, students
+analyse a data set of their own choice that contains at least one
+categorical and one numerical variable. They import it into R, choose
+two or three suitable graphs (at least one made with
+<code>ggplot2</code>), describe the centre, spread and shape of the
+distributions, and present their code, results and interpretation in a
+ten-minute presentation. Presentations are graded individually as well
+as by group.</li>
+<li><strong>Written assignments.</strong> Each group receives written
+feedback on its interpretation and on the validity and limitations of
+its models, along with answers to the questions the group raised.</li>
+<li><strong>Open-note examination</strong> with short analysis problems
+in R.</li>
+</ul>
+<p><strong>Teaching students with mixed quantitative
+backgrounds.</strong> Simulation lets students without much mathematics
+see a result before they meet its formal statement, while the formal
+statement is always given for students who want it. Code is provided as
+worked examples that students change step by step rather than write from
+scratch. Optional “thinking questions” in the assignments give stronger
+students room to go further.</p>
+</div>
+<div id="open-teaching-materials" class="section level2">
+<h2>Open teaching materials</h2>
+<p>The lesson sources are available on <a
+href="https://github.com/jinjiayun57/data-analysis-with-r">GitHub</a> as
+R Markdown files; each lesson page also has a <strong>Code</strong>
+button to download its source. The data are simulated or come from
+packages that ship with R, so every lesson runs as it is:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;rmarkdown&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;RColorBrewer&quot;</span>, <span class="st">&quot;MASS&quot;</span>, <span class="st">&quot;car&quot;</span>))</span></code></pre></div>
+<p>Lesson text, code and figures are licensed under <a
+href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> (text
+and figures) and the MIT License (code). You are welcome to reuse and
+adapt them; please credit the source.</p>
+<p>The slides (LaTeX Beamer, in Chinese and English as taught in 2025)
+are shared for viewing and teaching use with attribution. They are not
+covered by the CC BY licence, and any third-party images in them remain
+the property of their owners.</p>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRGF0YSBBbmFseXNpcyB3aXRoIFIiCnN1YnRpdGxlOiAiQW4gaW50cm9kdWN0b3J5IHN0YXRpc3RpY3MgY291cnNlIGZvciBzdHVkZW50cyBmcm9tIGFueSBkaXNjaXBsaW5lIgotLS0KCjxzdHlsZT4KLm1vZHVsZSB7IG1hcmdpbi10b3A6IDEuNmVtOyB9Ci5zZXNzaW9uIHsgYm9yZGVyLWxlZnQ6IDRweCBzb2xpZCAjZDVkYmUzOyBwYWRkaW5nOiAwLjRlbSAwLjZlbSAwLjRlbSAwLjllbTsgbWFyZ2luOiAwLjZlbSAwOyB9Ci5zZXNzaW9uIHAgeyBtYXJnaW46IDAuMmVtIDA7IH0KLnNlc3Npb24uZnVsbCB7IGJvcmRlci1sZWZ0LWNvbG9yOiAjMThiYzljOyBiYWNrZ3JvdW5kOiAjZjRmYmY5OyB9Ci5zdGl0bGUgeyBmb250LXdlaWdodDogNjAwOyBmb250LXNpemU6IDEuMDVlbTsgY29sb3I6ICMyYzNlNTA7IH0KLnNlc3Npb24gcCB7IG1hcmdpbjogMC4xNWVtIDA7IH0KLnNtYWxsIHsgZGlzcGxheTpibG9jazsgfQoudGFnIHsgZGlzcGxheTogaW5saW5lLWJsb2NrOyBmb250LXNpemU6IDAuNzVlbTsgZm9udC13ZWlnaHQ6IDYwMDsgcGFkZGluZzogMC4wNWVtIDAuNWVtOwogICAgICAgYm9yZGVyLXJhZGl1czogM3B4OyBiYWNrZ3JvdW5kOiAjMThiYzljOyBjb2xvcjogd2hpdGU7IG1hcmdpbi1sZWZ0OiAwLjRlbTsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsgfQouc21hbGwgeyBjb2xvcjogIzU1NTsgZm9udC1zaXplOiAwLjkyZW07IH0KPC9zdHlsZT4KCiMjIENvdXJzZSBvdmVydmlldwoKKkRhdGEgQW5hbHlzaXMgd2l0aCBSKiBpcyBhbiB1bmRlcmdyYWR1YXRlIGNvdXJzZSBJIGRlc2lnbmVkIGFuZCBpbnRyb2R1Y2VkIGF0ClJlbm1pbiBVbml2ZXJzaXR5IG9mIENoaW5hLiBJIHRhdWdodCBpdCBpbiBzcHJpbmcgMjAyNCBhbmQgYWdhaW4sIHJldmlzZWQsIGluCnNwcmluZyAyMDI1LiBJdCB3YXMgb2ZmZXJlZCBhcyBhbiBlbGVjdGl2ZSBvcGVuIHRvIHN0dWRlbnRzIGZyb20gYWNyb3NzIHRoZQp1bml2ZXJzaXR5LCB3aXRoIGNsYXNzZXMgb2YgdXAgdG8gNjggc3R1ZGVudHMuIEEgc2luZ2xlIGNsYXNzIGNvdWxkIGluY2x1ZGUKc3R1ZGVudHMgb2YgbXVzaWMsIGpvdXJuYWxpc20sIHNvY2lvbG9neSwgc3RhdGlzdGljcyBhbmQgcGh5c2ljcy4gTW9zdCBoYWQKbGl0dGxlIG1hdGhlbWF0aWNhbCBiYWNrZ3JvdW5kIGFuZCBoYWQgbmV2ZXIgcHJvZ3JhbW1lZC4KCioqQ291cnNlIGdvYWxzLioqIEJ5IHRoZSBlbmQgb2YgdGhlIGNvdXJzZSwgc3R1ZGVudHMgY2FuCgotIGltcG9ydCwgY2xlYW4gYW5kIG1hbmFnZSBhIGRhdGEgc2V0IGluIFI7Ci0gZGVzY3JpYmUgYW5kIHZpc3VhbGlzZSBkYXRhIGFwcHJvcHJpYXRlbHkgZm9yIHRoZSB0eXBlIG9mIHZhcmlhYmxlOwotIGV4cGxhaW4gdGhlIGxvZ2ljIG9mIGVzdGltYXRpb24gYW5kIGh5cG90aGVzaXMgdGVzdGluZywgYW5kIGFwcGx5IHRoZW07Ci0gZml0LCBpbnRlcnByZXQgYW5kIGNyaXRpY2FsbHkgZXZhbHVhdGUgbGluZWFyIGFuZCBsb2dpc3RpYyByZWdyZXNzaW9uIG1vZGVsczsKLSByZXBvcnQgYW4gYW5hbHlzaXMgb2YgdGhlaXIgb3duIGRhdGEsIHdpdGggY29kZSwgcmVzdWx0cyBhbmQgaW50ZXJwcmV0YXRpb24uCgojIyBBcHByb2FjaAoKRWFjaCBzZXNzaW9uIGZvbGxvd3MgdGhlIHNhbWUgcGF0dGVybjoKCjEuICoqU3RhcnQgZnJvbSBzb21ldGhpbmcgc3R1ZGVudHMgY2FuIG9ic2VydmUuKiogQmVmb3JlIGEgZm9ybXVsYSBhcHBlYXJzLAogICBzdHVkZW50cyBydW4gYSBzbWFsbCBzaW11bGF0aW9uIG9yIGxvb2sgYXQgYSBwbG90IGFuZCBkZXNjcmliZSB3aGF0IHRoZXkKICAgc2VlLgoyLiAqKkNvbm5lY3QgdGhlIG9ic2VydmF0aW9uIHRvIHRoZSBmb3JtYWwgaWRlYS4qKiBUaGUgZGVmaW5pdGlvbiBvciB0aGVvcmVtCiAgIHRoZW4gZXhwbGFpbnMgYSBwYXR0ZXJuIHRoYXQgc3R1ZGVudHMgaGF2ZSBhbHJlYWR5IHNlZW4gZm9yIHRoZW1zZWx2ZXMuCjMuICoqUHJhY3Rpc2Ugd2l0aCBkYXRhLioqIFNob3J0IGV4ZXJjaXNlcyBhc2sgc3R1ZGVudHMgdG8gY2hhbmdlIHRoZSBjb2RlIGFuZAogICByZWFzb24gYWJvdXQgd2hhdCBoYXBwZW5zLCBmaXJzdCBvbiBzaW11bGF0ZWQgZGF0YSwgdGhlbiBvbiByZWFsIGRhdGEuCgpFYWNoIHNlc3Npb24gb3BlbnMgd2l0aCBhIGNvbmNlcHQgbWFwIHRoYXQgcmV2aWV3cyB0aGUgcHJldmlvdXMgc2Vzc2lvbiBhbmQKcGxhY2VzIHRoZSBuZXcgdG9waWMgaW4gdGhlIHN0cnVjdHVyZSBvZiB0aGUgY291cnNlLCBhbmQgY2xvc2VzIHdpdGggYQpzdW1tYXJ5IG1hcCwgc28gdGhhdCBzdHVkZW50cyBzZWUgaG93IHRoZSBtZXRob2RzIGJ1aWxkIG9uIGVhY2ggb3RoZXIuCgpUaGUgY2xhc3Nyb29tIGlzIG1lYW50IGFzIGEgcGxhY2Ugd2hlcmUgc3R1ZGVudHMgY2FuIHZvaWNlIHRoZWlyIG9waW5pb25zIGFuZApkaXNjdXNzIG9wZW5seSB3aXRob3V0IGZlYXIgb2YganVkZ2VtZW50OyB0aGUgdGVhY2hlcidzIHJvbGUgaXMgdGhhdCBvZiBhCmZhY2lsaXRhdG9yLgoKUiBpcyB1c2VkIGJvdGggZm9yIGRhdGEgYW5hbHlzaXMgYW5kIGFzIGEgbGFib3JhdG9yeSBmb3Igc3RhdGlzdGljYWwgaWRlYXM6CmNvdmVyYWdlIHJhdGVzLCBzYW1wbGluZyBkaXN0cmlidXRpb25zIGFuZCBlcnJvciByYXRlcyBiZWNvbWUgdGhpbmdzIHN0dWRlbnRzCmNhbiBjb3VudCwgbm90IG9ubHkgZGVmaW5pdGlvbnMgdG8gbWVtb3Jpc2UuCgojIyBDb3Vyc2UgbWFwCgo8ZmlndXJlIHN0eWxlPSJtYXJnaW46IDFlbSAwIDEuNWVtIDA7Ij4KPGltZyBzcmM9ImltYWdlcy9jb3Vyc2UtbWFwLnBuZyIgYWx0PSJDb3Vyc2UgbWFwOiBmaXZlIG1vZHVsZXMgYW5kIHNpeHRlZW4gc2Vzc2lvbnMuIE1vZHVsZSAxLCB3b3JraW5nIHdpdGggUiBhbmQgZGF0YTogc2Vzc2lvbnMgMSB0byA0LiBNb2R1bGUgMiwgcHJvYmFiaWxpdHkgYW5kIGluZmVyZW5jZTogc2Vzc2lvbnMgNSB0byA3LiBNb2R1bGUgMywgZGVzY3JpYmluZyBhbmQgdmlzdWFsaXNpbmcgZGF0YTogc2Vzc2lvbnMgOCBhbmQgOS4gTW9kdWxlIDQsIHN0YXRpc3RpY2FsIG1vZGVsczogc2Vzc2lvbnMgMTAgdG8gMTQuIE1vZHVsZSA1LCBicmluZ2luZyBpdCB0b2dldGhlcjogc2Vzc2lvbnMgMTUgYW5kIDE2LiBTZXNzaW9ucyA1LCA2LCA3LCAxMCBhbmQgMTQgYXJlIGZ1bGwgbGVzc29ucy4iIHN0eWxlPSJ3aWR0aDoxMDAlOyBtYXgtd2lkdGg6OTAwcHg7Ij4KPC9maWd1cmU+CgpTaXh0ZWVuIHdlZWtseSBzZXNzaW9ucywgaW4gdGhlIG9yZGVyIGluIHdoaWNoIHRoZXkgd2VyZSB0YXVnaHQuIEVhY2ggdGVhY2hpbmcgc2Vzc2lvbiBsaW5rcyB0byBpdHMgc2xpZGVzOyBzZXNzaW9ucyBtYXJrZWQgW2Z1bGwgbGVzc29uXXsudGFnfSBhcmUgYWxzbyBhdmFpbGFibGUKYXMgY29tcGxldGUgbGVzc29ucyB3aXRoIGNvZGUsIHNpbXVsYXRpb25zLCBleHBsYW5hdGlvbnMgYW5kIGV4ZXJjaXNlcy4KCiMjIyBNb2R1bGUgMSDCtyBXb3JraW5nIHdpdGggUiBhbmQgZGF0YQoKOjo6IHsuc2Vzc2lvbn0KWzEuIEdldHRpbmcgc3RhcnRlZCB3aXRoIFJdey5zdGl0bGV9CgoqKk9iamVjdGl2ZXM6KiogcnVuIGNvZGUgaW4gUlN0dWRpbywgd29yayB3aXRoIG9iamVjdHMsIHNjcmlwdHMgYW5kIHBhY2thZ2VzLCBhbmQgcmVwcm9kdWNlIGEgZmlyc3Qgc21hbGwgYW5hbHlzaXMuCgpbVG9waWNzOiB3aHkgUiwgUiBhbmQgUlN0dWRpbywgdGhlIHdvcmtzcGFjZSwgcGFja2FnZXMsIHJldXNpbmcgb3V0cHV0IGFzIGlucHV0LCBhIHdvcmtlZCBleGFtcGxlLl17LnNtYWxsfQoK4oaSIFtTbGlkZXMgKFBERildKHNsaWRlcy8wMS1nZXR0aW5nLXN0YXJ0ZWQtd2l0aC1yLnBkZikKOjo6Cgo6Ojogey5zZXNzaW9ufQpbMi4gRGF0YSBzdHJ1Y3R1cmVzIGFuZCBjcmVhdGluZyBkYXRhIHNldHNdey5zdGl0bGV9CgoqKk9iamVjdGl2ZXM6KiogY2hvb3NlIGFuIGFwcHJvcHJpYXRlIGRhdGEgc3RydWN0dXJlIGFuZCBjcmVhdGUgb3IgaW1wb3J0IGEgZGF0YSBzZXQuCgpbVG9waWNzOiB2ZWN0b3JzLCBtYXRyaWNlcywgYXJyYXlzLCBkYXRhIGZyYW1lcywgZmFjdG9ycyBhbmQgbGlzdHM7IHR5cGVzIG9mIHZhcmlhYmxlczsgZW50ZXJpbmcgZGF0YTsgaW1wb3J0aW5nIHNwcmVhZHNoZWV0cy5dey5zbWFsbH0KCuKGkiBbU2xpZGVzIChQREYpXShzbGlkZXMvMDItY3JlYXRpbmctYS1kYXRhLXNldC5wZGYpCjo6OgoKOjo6IHsuc2Vzc2lvbn0KWzMuIERhdGEgbWFuYWdlbWVudCBJXXsuc3RpdGxlfQoKKipPYmplY3RpdmVzOioqIGNyZWF0ZSBhbmQgcmVjb2RlIHZhcmlhYmxlcywgYW5kIGRldGVjdCBhbmQgaGFuZGxlIG1pc3NpbmcgdmFsdWVzLgoKW1RvcGljczogYXJpdGhtZXRpYyBhbmQgbG9naWNhbCBvcGVyYXRvcnMsIHJlY29kaW5nIGEgY29udGludW91cyB2YXJpYWJsZSBpbnRvIGNhdGVnb3JpZXMsIHJlbmFtaW5nLCBgaWZlbHNlKClgLCBtaXNzaW5nIHZhbHVlcywgdHlwZSBjb252ZXJzaW9ucy5dey5zbWFsbH0KCuKGkiBbU2xpZGVzIChQREYpXShzbGlkZXMvMDMtZGF0YS1tYW5hZ2VtZW50LTEucGRmKQo6OjoKCjo6OiB7LnNlc3Npb259Cls0LiBEYXRhIG1hbmFnZW1lbnQgSUldey5zdGl0bGV9CgoqKk9iamVjdGl2ZXM6KiogcHJlcGFyZSBhbiBhbmFseXNpcyBkYXRhIHNldCBmcm9tIHJhdyBkYXRhLgoKW1RvcGljczogc29ydGluZywgbWVyZ2luZyBhbmQgc3Vic2V0dGluZyBkYXRhIHNldHM7IGEgY29tcHJlaGVuc2l2ZSBleGVyY2lzZSBjb3ZlcmluZyBhbGwgZGF0YSBtYW5hZ2VtZW50IHN0ZXBzLCB3aXRoIHNvbHV0aW9ucy5dey5zbWFsbH0KCuKGkiBbU2xpZGVzIChQREYpXShzbGlkZXMvMDQtZGF0YS1tYW5hZ2VtZW50LTIucGRmKQo6OjoKCiMjIyBNb2R1bGUgMiDCtyBQcm9iYWJpbGl0eSBhbmQgaW5mZXJlbmNlCgo6Ojogey5zZXNzaW9uIC5mdWxsfQpbNS4gUHJvYmFiaWxpdHkgYW5kIHNpbXVsYXRpb25dey5zdGl0bGV9IFtmdWxsIGxlc3Nvbl17LnRhZ30KCioqT2JqZWN0aXZlczoqKiB1bmRlcnN0YW5kIHByb2JhYmlsaXR5IGFzIGxvbmctcnVuIGZyZXF1ZW5jeSwgd29yayB3aXRoIGNvbW1vbiBkaXN0cmlidXRpb25zLCBhbmQgc2VlIHRoZSBjZW50cmFsIGxpbWl0IHRoZW9yZW0gaGFwcGVuLgoKW1RvcGljczogbGF3IG9mIGxhcmdlIG51bWJlcnMsIGJpbm9taWFsLCBQb2lzc29uIGFuZCBub3JtYWwgZGlzdHJpYnV0aW9ucywgYGQvcC9xL3JgIGZ1bmN0aW9ucywgc2FtcGxpbmcgZGlzdHJpYnV0aW9uIG9mIHRoZSBtZWFuLl17LnNtYWxsfQoK4oaSIFtPcGVuIHRoZSBsZXNzb25dKDAxLXByb2JhYmlsaXR5LWFuZC1zaW11bGF0aW9uLmh0bWwpIMK3IFtTbGlkZXMgKFBERildKHNsaWRlcy8wNS1wcm9iYWJpbGl0eS1hbmQtZGlzdHJpYnV0aW9ucy5wZGYpCjo6OgoKOjo6IHsuc2Vzc2lvbiAuZnVsbH0KWzYuIFBhcmFtZXRlciBlc3RpbWF0aW9uIGFuZCBjb25maWRlbmNlIGludGVydmFsc117LnN0aXRsZX0gW2Z1bGwgbGVzc29uXXsudGFnfQoKKipPYmplY3RpdmVzOioqIGV4cGxhaW4gd2hhdCAiOTUlIGNvbmZpZGVuY2UiIHJlZmVycyB0bywgYW5kIGNvbXB1dGUgYW5kIGludGVycHJldCBjb25maWRlbmNlIGludGVydmFscy4KCltUb3BpY3M6IGNoaS1zcXVhcmUsIHQgYW5kIEYgZGlzdHJpYnV0aW9ucywgdGhlIGNlbnRyYWwgbGltaXQgdGhlb3JlbSwgcG9pbnQgYW5kIGludGVydmFsIGVzdGltYXRpb24sIHJlcGVhdGVkIHNhbXBsaW5nIGFuZCBjb3ZlcmFnZS5dey5zbWFsbH0KCuKGkiBbT3BlbiB0aGUgbGVzc29uXSgwMi1jb25maWRlbmNlLWludGVydmFscy5odG1sKSDCtyBbU2xpZGVzIChQREYpXShzbGlkZXMvMDYtcGFyYW1ldGVyLWVzdGltYXRpb24ucGRmKQo6OjoKCjo6OiB7LnNlc3Npb24gLmZ1bGx9Cls3LiBIeXBvdGhlc2lzIHRlc3Rpbmddey5zdGl0bGV9IFtmdWxsIGxlc3Nvbl17LnRhZ30KCioqT2JqZWN0aXZlczoqKiBmb3JtdWxhdGUgaHlwb3RoZXNlcywgY29tcHV0ZSB0ZXN0IHN0YXRpc3RpY3MgYW5kIHAtdmFsdWVzLCBhbmQgZXhwbGFpbiB3aGF0IHRoZSBzaWduaWZpY2FuY2UgbGV2ZWwgY29udHJvbHMuCgpbVG9waWNzOiByZWplY3Rpb24gcmVnaW9ucywgei0gYW5kIHQtdGVzdHMsIG9uZS0gYW5kIHR3by1zaWRlZCB0ZXN0cywgVHlwZSBJIGFuZCBUeXBlIElJIGVycm9ycywgZXJyb3IgcmF0ZXMgYW5kIHBvd2VyIGJ5IHNpbXVsYXRpb24uXXsuc21hbGx9CgrihpIgW09wZW4gdGhlIGxlc3Nvbl0oMDMtaHlwb3RoZXNpcy10ZXN0aW5nLmh0bWwpIMK3IFtTbGlkZXMgKFBERildKHNsaWRlcy8wNy1oeXBvdGhlc2lzLXRlc3RpbmcucGRmKQo6OjoKCiMjIyBNb2R1bGUgMyDCtyBEZXNjcmliaW5nIGFuZCB2aXN1YWxpc2luZyBkYXRhCgo6Ojogey5zZXNzaW9ufQpbOC4gR3JhcGhzIGZvciBjYXRlZ29yaWNhbCBhbmQgbnVtZXJpY2FsIGRhdGFdey5zdGl0bGV9CgoqKk9iamVjdGl2ZXM6KiogY2hvb3NlIGEgZ3JhcGggdGhhdCBtYXRjaGVzIHRoZSB0eXBlIG9mIHZhcmlhYmxlIGFuZCB0aGUgcXVlc3Rpb24uCgpbVG9waWNzOiBjb250aW5nZW5jeSB0YWJsZXMsIGJhciBjaGFydHMgYW5kIHNwaW5lIHBsb3RzLCBwaWUgYW5kIGZhbiBjaGFydHMsIGhpc3RvZ3JhbXMgYW5kIGRlbnNpdHkgY3VydmVzLCBib3ggYW5kIHZpb2xpbiBwbG90cywgc2NhdHRlciBwbG90czsgYW4gZXhlcmNpc2Ugb24gdGhlIGBpcmlzYCBkYXRhLl17LnNtYWxsfQoK4oaSIFtTbGlkZXMgKFBERildKHNsaWRlcy8wOC1ncmFwaHMucGRmKQo6OjoKCjo6OiB7LnNlc3Npb259Cls5LiBEZXNjcmlwdGl2ZSBzdGF0aXN0aWNzXXsuc3RpdGxlfQoKKipPYmplY3RpdmVzOioqIHN1bW1hcmlzZSB0aGUgY2VudHJlLCBzcHJlYWQgYW5kIHNoYXBlIG9mIGEgZGlzdHJpYnV0aW9uIGFuZCBjaG9vc2Ugc3VpdGFibGUgbWVhc3VyZXMuCgpbVG9waWNzOiBtZWFuLCBtZWRpYW4sIG1vZGUgYW5kIHF1YW50aWxlczsgdmFyaWFuY2UsIHN0YW5kYXJkIGRldmlhdGlvbiBhbmQgY29lZmZpY2llbnQgb2YgdmFyaWF0aW9uOyBzdGFuZGFyZCBzY29yZXM7IHNrZXduZXNzIGFuZCBrdXJ0b3Npcy4gVGhlIGdyb3VwIHByb2plY3QgaXMgaW50cm9kdWNlZCBpbiB0aGlzIHNlc3Npb24uXXsuc21hbGx9CgrihpIgW1NsaWRlcyAoUERGKV0oc2xpZGVzLzA5LWRlc2NyaXB0aXZlLXN0YXRpc3RpY3MucGRmKQo6OjoKCiMjIyBNb2R1bGUgNCDCtyBTdGF0aXN0aWNhbCBtb2RlbHMKCjo6OiB7LnNlc3Npb24gLmZ1bGx9ClsxMC4gQ29ycmVsYXRpb24gYW5kIGxpbmVhciByZWdyZXNzaW9uXXsuc3RpdGxlfSBbZnVsbCBsZXNzb25dey50YWd9CgoqKk9iamVjdGl2ZXM6KiogZml0LCBpbnRlcnByZXQgYW5kIGNoZWNrIHNpbXBsZSBhbmQgbXVsdGlwbGUgcmVncmVzc2lvbiBtb2RlbHMuCgpbVG9waWNzOiBQZWFyc29uIGFuZCBTcGVhcm1hbiBjb3JyZWxhdGlvbiwgY29ycmVsYXRpb24gdmVyc3VzIGNhdXNhdGlvbiwgbGVhc3Qgc3F1YXJlcywgZGlhZ25vc3RpYyBwbG90cywgcG9seW5vbWlhbCB0ZXJtcywgdGhlIGJpYXPigJN2YXJpYW5jZSB0cmFkZS1vZmYsIHZhcmlhYmxlIHNlbGVjdGlvbiwgbXVsdGljb2xsaW5lYXJpdHkuXXsuc21hbGx9CgrihpIgW09wZW4gdGhlIGxlc3Nvbl0oMDQtbGluZWFyLXJlZ3Jlc3Npb24uaHRtbCkgwrcgW1NsaWRlcyAoUERGKV0oc2xpZGVzLzEwLXJlZ3Jlc3Npb24ucGRmKQo6OjoKCjo6OiB7LnNlc3Npb259ClsxMS4gR3JvdXAgcHJlc2VudGF0aW9uc117LnN0aXRsZX0KCioqT2JqZWN0aXZlczoqKiBwcmVzZW50IGFuIGFuYWx5c2lzIG9mIGEgc2VsZi1jaG9zZW4gZGF0YSBzZXQgYW5kIGFuc3dlciBxdWVzdGlvbnMgZnJvbSBwZWVycy4KCjo6OgoKOjo6IHsuc2Vzc2lvbn0KWzEyLiBDYXRlZ29yaWNhbCBkYXRhOiBjaGktc3F1YXJlIHRlc3RzXXsuc3RpdGxlfQoKKipPYmplY3RpdmVzOioqIHRlc3QgZ29vZG5lc3Mgb2YgZml0IGFuZCBpbmRlcGVuZGVuY2UsIGFuZCBjaGVjayBSJ3MgcmVzdWx0cyBieSBoYW5kLgoKW1RvcGljczogY29udGluZ2VuY3kgdGFibGVzLCBleHBlY3RlZCBjb3VudHMsIHRoZSBjaGktc3F1YXJlIGRpc3RyaWJ1dGlvbiwgYGNoaXNxLnRlc3QoKWAsIGFuIGFwcGxpY2F0aW9uIHRvIHN1cnZleSBkYXRhIG9uIGdlbmRlciBhdHRpdHVkZXMuXXsuc21hbGx9CgrihpIgW1NsaWRlcyAoUERGKV0oc2xpZGVzLzEyLWNoaS1zcXVhcmUtdGVzdHMucGRmKQo6OjoKCjo6OiB7LnNlc3Npb259ClsxMy4gQ29tcGFyaW5nIGdyb3VwczogYW5hbHlzaXMgb2YgdmFyaWFuY2Vdey5zdGl0bGV9CgoqKk9iamVjdGl2ZXM6KiogZXhwbGFpbiBBTk9WQSBhcyBhIGNvbXBhcmlzb24gb2YgYmV0d2Vlbi0gYW5kIHdpdGhpbi1ncm91cCB2YXJpYXRpb24sIGFuZCBmb2xsb3cgdXAgb24gYSBzaWduaWZpY2FudCByZXN1bHQuCgpbVG9waWNzOiBzaW11bGF0ZWQgZ3JvdXBzIHdpdGggc21hbGwgYW5kIGxhcmdlIHdpdGhpbi0gYW5kIGJldHdlZW4tZ3JvdXAgdmFyaWFuY2UsIHN1bXMgb2Ygc3F1YXJlcywgdGhlIEYgdGVzdCwgVHVrZXkncyBIU0QsIExldmVuZSdzIHRlc3QsIHRoZSBLcnVza2Fs4oCTV2FsbGlzIHRlc3QuXXsuc21hbGx9CgrihpIgW1NsaWRlcyAoUERGKV0oc2xpZGVzLzEzLWFub3ZhLnBkZikKOjo6Cgo6Ojogey5zZXNzaW9uIC5mdWxsfQpbMTQuIEdlbmVyYWxpc2VkIGxpbmVhciBtb2RlbHM6IGxvZ2lzdGljIHJlZ3Jlc3Npb25dey5zdGl0bGV9IFtmdWxsIGxlc3Nvbl17LnRhZ30KCioqT2JqZWN0aXZlczoqKiBtb2RlbCBhIGJpbmFyeSBvdXRjb21lLCBpbnRlcnByZXQgb2RkcyByYXRpb3MgYW5kIGV2YWx1YXRlIHByZWRpY3Rpb25zIG9uIG5ldyBkYXRhLgoKW1RvcGljczogbWF4aW11bSBsaWtlbGlob29kLCBBSUMgYW5kIEJJQywgbG9nLW9kZHMgYW5kIG9kZHMgcmF0aW9zLCBwcmVkaWN0ZWQgcHJvYmFiaWxpdGllcywgY2xhc3NpZmljYXRpb24sIHNlbnNpdGl2aXR5IGFuZCBzcGVjaWZpY2l0eS5dey5zbWFsbH0KCuKGkiBbT3BlbiB0aGUgbGVzc29uXSgwNS1sb2dpc3RpYy1yZWdyZXNzaW9uLmh0bWwpIMK3IFtTbGlkZXMgKFBERildKHNsaWRlcy8xNC1nZW5lcmFsaXNlZC1saW5lYXItbW9kZWxzLnBkZikKOjo6CgojIyMgTW9kdWxlIDUgwrcgQnJpbmdpbmcgaXQgdG9nZXRoZXIKCjo6OiB7LnNlc3Npb259ClsxNS4gUmV2aWV3IGFuZCBuZXh0IHN0ZXBzXXsuc3RpdGxlfQoKKipPYmplY3RpdmVzOioqIGNvbm5lY3QgdGhlIG1ldGhvZHMgb2YgdGhlIGNvdXJzZSBhbmQgbG9vayBhaGVhZCB0byBgZ2dwbG90MmAgYW5kIHRvIGRhdGEgc2NpZW5jZSBtb3JlIGJyb2FkbHkuCgpbVG9waWNzOiBhIGNvbmNlcHQgbWFwIG9mIHRoZSB3aG9sZSBjb3Vyc2UsIGNob29zaW5nIGEgbWV0aG9kIGJ5IHRoZSB0eXBlIG9mIG91dGNvbWUgYW5kIHByZWRpY3RvciwgYGdncGxvdDJgLCBkYXRhIHNjaWVuY2UgbW9yZSBicm9hZGx5Ll17LnNtYWxsfQoKOjo6Cgo6Ojogey5zZXNzaW9ufQpbMTYuIEV4YW1pbmF0aW9uXXsuc3RpdGxlfQoKKipPYmplY3RpdmVzOioqIGFwcGx5IHRoZSBjb3Vyc2UgbWV0aG9kcyBpbmRlcGVuZGVudGx5IHRvIHNob3J0IGFuYWx5c2lzIHByb2JsZW1zIGluIFIsIGluIGFuIG9wZW4tbm90ZSBleGFtaW5hdGlvbi4KCjo6OgoKIyMjIEhvdyB0aGUgbWV0aG9kcyBmaXQgdG9nZXRoZXIKClRoZSBsYXN0IHNlc3Npb24gb24gbW9kZWxzIGJyaW5ncyB0aGUgbWV0aG9kcyB0b2dldGhlciBieSB0aGUgdHlwZSBvZiBvdXRjb21lCmFuZCBwcmVkaWN0b3I6Cgp8IE91dGNvbWUgfCBQcmVkaWN0b3IgfCBNZXRob2QgaW4gdGhpcyBjb3Vyc2UgfAp8LS0tfC0tLXwtLS18CnwgQ2F0ZWdvcmljYWwgfCBDYXRlZ29yaWNhbCB8IENoaS1zcXVhcmUgdGVzdCAoc2Vzc2lvbiAxMikgfAp8IE51bWVyaWNhbCB8IENhdGVnb3JpY2FsIHwgdC10ZXN0LCBhbmFseXNpcyBvZiB2YXJpYW5jZSAoc2Vzc2lvbnMgNyBhbmQgMTMpIHwKfCBOdW1lcmljYWwgfCBOdW1lcmljYWwgfCBTaW1wbGUsIG11bHRpcGxlIGFuZCBwb2x5bm9taWFsIHJlZ3Jlc3Npb24gKHNlc3Npb24gMTApIHwKfCBCaW5hcnkgb3Igb3RoZXJ3aXNlIG5vbi1ub3JtYWwgfCBBbnkgfCBHZW5lcmFsaXNlZCBsaW5lYXIgbW9kZWxzLCBlLmcuIGxvZ2lzdGljIHJlZ3Jlc3Npb24gKHNlc3Npb24gMTQpIHwKCiMjIEFzc2Vzc21lbnQgYW5kIGNvdXJzZSBkZXNpZ24KClRoZSBmaW5hbCBncmFkZSBjb21iaW5lcyAqKmNvdXJzZXdvcmsgKDQwJSkqKiBhbmQgYW4gKipvcGVuLW5vdGUKZXhhbWluYXRpb24gKDYwJSkqKi4KCi0gKipFeGVyY2lzZXMgaW4gZXZlcnkgc2Vzc2lvbi4qKiBTZXNzaW9ucyBlbmQgd2l0aCB0YXNrcyB0aGF0IGFzayBzdHVkZW50cyB0bwogIG1vZGlmeSB0aGUgY29kZSBhbmQgZXhwbGFpbiB0aGUgcmVzdWx0IGluIHdvcmRzOyBsb25nZXIgZXhlcmNpc2VzLCBzdWNoIGFzCiAgdGhlIGRhdGEgbWFuYWdlbWVudCBleGVyY2lzZSBpbiBzZXNzaW9uIDQsIGNvbWUgd2l0aCB3b3JrZWQgc29sdXRpb25zLgotICoqR3JvdXAgcHJvamVjdC4qKiBJbiBncm91cHMgb2YgZm91ciB0byBzaXgsIHN0dWRlbnRzIGFuYWx5c2UgYSBkYXRhIHNldCBvZgogIHRoZWlyIG93biBjaG9pY2UgdGhhdCBjb250YWlucyBhdCBsZWFzdCBvbmUgY2F0ZWdvcmljYWwgYW5kIG9uZSBudW1lcmljYWwKICB2YXJpYWJsZS4gVGhleSBpbXBvcnQgaXQgaW50byBSLCBjaG9vc2UgdHdvIG9yIHRocmVlIHN1aXRhYmxlIGdyYXBocyAoYXQKICBsZWFzdCBvbmUgbWFkZSB3aXRoIGBnZ3Bsb3QyYCksIGRlc2NyaWJlIHRoZSBjZW50cmUsIHNwcmVhZCBhbmQgc2hhcGUgb2YgdGhlCiAgZGlzdHJpYnV0aW9ucywgYW5kIHByZXNlbnQgdGhlaXIgY29kZSwgcmVzdWx0cyBhbmQgaW50ZXJwcmV0YXRpb24gaW4gYQogIHRlbi1taW51dGUgcHJlc2VudGF0aW9uLiBQcmVzZW50YXRpb25zIGFyZSBncmFkZWQgaW5kaXZpZHVhbGx5IGFzIHdlbGwgYXMgYnkKICBncm91cC4KLSAqKldyaXR0ZW4gYXNzaWdubWVudHMuKiogRWFjaCBncm91cCByZWNlaXZlcyB3cml0dGVuIGZlZWRiYWNrIG9uIGl0cwogIGludGVycHJldGF0aW9uIGFuZCBvbiB0aGUgdmFsaWRpdHkgYW5kIGxpbWl0YXRpb25zIG9mIGl0cyBtb2RlbHMsIGFsb25nIHdpdGgKICBhbnN3ZXJzIHRvIHRoZSBxdWVzdGlvbnMgdGhlIGdyb3VwIHJhaXNlZC4KLSAqKk9wZW4tbm90ZSBleGFtaW5hdGlvbioqIHdpdGggc2hvcnQgYW5hbHlzaXMgcHJvYmxlbXMgaW4gUi4KCioqVGVhY2hpbmcgc3R1ZGVudHMgd2l0aCBtaXhlZCBxdWFudGl0YXRpdmUgYmFja2dyb3VuZHMuKiogU2ltdWxhdGlvbiBsZXRzCnN0dWRlbnRzIHdpdGhvdXQgbXVjaCBtYXRoZW1hdGljcyBzZWUgYSByZXN1bHQgYmVmb3JlIHRoZXkgbWVldCBpdHMgZm9ybWFsCnN0YXRlbWVudCwgd2hpbGUgdGhlIGZvcm1hbCBzdGF0ZW1lbnQgaXMgYWx3YXlzIGdpdmVuIGZvciBzdHVkZW50cyB3aG8gd2FudCBpdC4KQ29kZSBpcyBwcm92aWRlZCBhcyB3b3JrZWQgZXhhbXBsZXMgdGhhdCBzdHVkZW50cyBjaGFuZ2Ugc3RlcCBieSBzdGVwIHJhdGhlcgp0aGFuIHdyaXRlIGZyb20gc2NyYXRjaC4gT3B0aW9uYWwgInRoaW5raW5nIHF1ZXN0aW9ucyIgaW4gdGhlIGFzc2lnbm1lbnRzIGdpdmUKc3Ryb25nZXIgc3R1ZGVudHMgcm9vbSB0byBnbyBmdXJ0aGVyLgoKIyMgT3BlbiB0ZWFjaGluZyBtYXRlcmlhbHMKClRoZSBsZXNzb24gc291cmNlcyBhcmUgYXZhaWxhYmxlIG9uCltHaXRIdWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9qaW5qaWF5dW41Ny9kYXRhLWFuYWx5c2lzLXdpdGgtcikgYXMgUiBNYXJrZG93bgpmaWxlczsgZWFjaCBsZXNzb24gcGFnZSBhbHNvIGhhcyBhICoqQ29kZSoqIGJ1dHRvbiB0byBkb3dubG9hZCBpdHMgc291cmNlLiBUaGUKZGF0YSBhcmUgc2ltdWxhdGVkIG9yIGNvbWUgZnJvbSBwYWNrYWdlcyB0aGF0IHNoaXAgd2l0aCBSLCBzbyBldmVyeSBsZXNzb24gcnVucwphcyBpdCBpczoKCmBgYHIKaW5zdGFsbC5wYWNrYWdlcyhjKCJybWFya2Rvd24iLCAiZ2dwbG90MiIsICJSQ29sb3JCcmV3ZXIiLCAiTUFTUyIsICJjYXIiKSkKYGBgCgpMZXNzb24gdGV4dCwgY29kZSBhbmQgZmlndXJlcyBhcmUgbGljZW5zZWQgdW5kZXIKW0NDIEJZIDQuMF0oaHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC8pICh0ZXh0IGFuZCBmaWd1cmVzKQphbmQgdGhlIE1JVCBMaWNlbnNlIChjb2RlKS4gWW91IGFyZSB3ZWxjb21lIHRvIHJldXNlIGFuZCBhZGFwdCB0aGVtOyBwbGVhc2UKY3JlZGl0IHRoZSBzb3VyY2UuCgpUaGUgc2xpZGVzIChMYVRlWCBCZWFtZXIsIGluIENoaW5lc2UgYW5kIEVuZ2xpc2ggYXMgdGF1Z2h0IGluIDIwMjUpIGFyZSBzaGFyZWQKZm9yIHZpZXdpbmcgYW5kIHRlYWNoaW5nIHVzZSB3aXRoIGF0dHJpYnV0aW9uLiBUaGV5IGFyZSBub3QgY292ZXJlZCBieSB0aGUgQ0MKQlkgbGljZW5jZSwgYW5kIGFueSB0aGlyZC1wYXJ0eSBpbWFnZXMgaW4gdGhlbSByZW1haW4gdGhlIHByb3BlcnR5IG9mIHRoZWlyCm93bmVycy4K</div>
+<hr>
+<p style="font-size:0.85em;color:#666">Jiayun Jin · Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the MIT License.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("index.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

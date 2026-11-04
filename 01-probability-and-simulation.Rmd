@@ -1,0 +1,188 @@
+---
+title: "Probability and simulation"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 4.5, dpi = 110)
+library(RColorBrewer)
+pal <- brewer.pal(8, "Paired")
+set.seed(2024)
+```
+
+*Session 5 of the [course](index.html) · [Slides for this session (PDF)](slides/05-probability-and-distributions.pdf)*
+
+**Learning goals.** After this lesson you can
+
+- explain why a relative frequency settles down as the number of trials grows;
+- use R's `d`, `p`, `q` and `r` functions for the binomial, Poisson and normal
+  distributions;
+- describe what the central limit theorem says, after seeing it happen in a
+  simulation.
+
+An important part of learning R is to experiment and play: change the numbers
+in the code and see what happens.
+
+## Random events: flipping a coin
+
+What does it mean that the probability of heads is 0.5? We cannot see it in
+one flip. But we can flip a (simulated) coin many times and watch the
+proportion of heads.
+
+`sample()` draws heads (1) or tails (0) at random, and `cumsum()` lets us
+compute the proportion of heads after each flip.
+
+```{r coin}
+n <- 20000
+coin_flips <- sample(c(0, 1), size = n, replace = TRUE)
+running_proportion <- cumsum(coin_flips) / seq_len(n)
+
+plot(running_proportion, type = "l", col = pal[2], log = "x",
+     xlab = "Number of flips (log scale)", ylab = "Proportion of heads",
+     main = "The proportion of heads settles down near 0.5")
+abline(h = 0.5, col = "red", lwd = 2)
+```
+
+After a few flips the proportion jumps around a lot; after thousands of flips
+it stays close to 0.5. This is the **law of large numbers**: probability is the
+long-run relative frequency.
+
+## Discrete distributions
+
+### Binomial
+
+The binomial distribution counts the number of successes in $n$ independent
+trials, each with success probability $p$. Typical examples: the number of patients
+out of 100 who experience a side effect of a medication (with $p = 0.05$), the
+number of fraudulent transactions among 50, or the number of returned orders
+in a week. `dbinom()` gives the probability of
+each possible count. Here are 80 trials with three different values of $p$:
+
+```{r binomial}
+x <- 0:80
+plot(x, dbinom(x, size = 80, prob = 0.5), type = "h", lwd = 2, col = pal[2],
+     xlab = "Number of successes", ylab = "P(X = x)", ylim = c(0, 0.15))
+lines(x + 0.3, dbinom(x, size = 80, prob = 0.8), type = "h", lwd = 2, col = pal[4])
+lines(x + 0.6, dbinom(x, size = 80, prob = 0.9), type = "h", lwd = 2, col = pal[6])
+legend("topleft", legend = c("p = 0.5", "p = 0.8", "p = 0.9"),
+       col = pal[c(2, 4, 6)], lwd = 2, bty = "n")
+```
+
+Probabilities over all possible counts sum to one, and the variance of
+simulated counts is close to the theoretical value $np(1-p)$:
+
+*Exercise.* If each of 100 patients has a 5% chance of a side effect, what is
+the probability that more than 10 patients experience it?
+
+```{r binomial-exercise}
+1 - pbinom(10, size = 100, prob = 0.05)
+```
+
+```{r binomial-check}
+sum(dbinom(x, 80, 0.5))
+var(rbinom(100000, size = 80, prob = 0.5))   # simulation
+80 * 0.5 * 0.5                               # theory
+```
+
+### Poisson
+
+The Poisson distribution describes counts of events in a fixed interval (for
+example, the number of patients arriving at an emergency department in an
+hour), with mean $\lambda$.
+
+```{r poisson}
+x <- 0:60
+lambdas <- c(5, 10, 20, 40)
+plot(x, dpois(x, lambdas[1]), type = "h", lwd = 2, col = pal[1],
+     xlab = "Number of events", ylab = "P(X = x)",
+     main = "Poisson distributions")
+for (k in 2:4) lines(x, dpois(x, lambdas[k]), type = "h", lwd = 2, col = pal[2 * k - 1])
+legend("topright", legend = lambdas, title = expression(lambda),
+       col = pal[c(1, 3, 5, 7)], lwd = 2, bty = "n")
+```
+
+*Exercise.* With $\lambda = 5$, what is the probability of observing at most
+three events?
+
+```{r poisson-exercise}
+sum(dpois(0:3, lambda = 5))
+ppois(3, lambda = 5)   # the same, using the cumulative distribution function
+```
+
+## The normal distribution
+
+```{r normal}
+x <- seq(-3, 11, 0.01)
+plot(x, dnorm(x, mean = 2, sd = 1), type = "l", lwd = 3, col = pal[2],
+     xlab = "x", ylab = "f(x)")
+lines(x, dnorm(x, mean = 5, sd = 1), lwd = 3, col = pal[4])
+lines(x, dnorm(x, mean = 5, sd = 2), lwd = 3, col = pal[6])
+legend("topright", legend = c("N(2, 1)", "N(5, 1)", "N(5, 4)"),
+       col = pal[c(2, 4, 6)], lwd = 3, bty = "n")
+```
+
+How much probability lies within one, two and three standard deviations of the
+mean?
+
+```{r sigma-rule}
+pnorm(1) - pnorm(-1)
+pnorm(2) - pnorm(-2)
+pnorm(3) - pnorm(-3)
+```
+
+### `d`, `p`, `q` and `r`
+
+Every distribution in R comes with four functions. For the normal
+distribution:
+
+| Function | Returns | Example |
+|---|---|---|
+| `dnorm(x)` | density at `x` | height of the curve |
+| `pnorm(q)` | $P(X \le q)$ | area to the left of `q` |
+| `qnorm(p)` | the value with area `p` to its left | inverse of `pnorm` |
+| `rnorm(n)` | `n` random draws | simulation |
+
+```{r dpqr}
+pnorm(0)
+qnorm(0.975)
+pnorm(qnorm(0.8))   # qnorm and pnorm undo each other
+qnorm(pnorm(-1))
+```
+
+## The central limit theorem, by experiment
+
+Suppose a population follows a Poisson distribution with $\lambda = 3$: it is
+discrete and skewed, nothing like a normal curve. We draw many samples from it,
+compute each sample's mean, and look at the distribution of those means.
+
+```{r clt, fig.height = 7}
+lambda <- 3
+n_samples <- 10000
+par(mfrow = c(2, 2))
+barplot(table(factor(rpois(10000, lambda), levels = 0:12)) / 10000,
+        col = pal[1], main = "Population: Poisson(3)", ylab = "Proportion")
+for (n in c(2, 10, 50)) {
+  means <- replicate(n_samples, mean(rpois(n, lambda)))
+  hist(means, breaks = 40, freq = FALSE, col = pal[3], border = "white",
+       main = paste("Means of samples of size", n), xlab = "Sample mean")
+  curve(dnorm(x, mean = lambda, sd = sqrt(lambda / n)), add = TRUE,
+        col = "red", lwd = 2)
+}
+par(mfrow = c(1, 1))
+```
+
+As the sample size grows, the distribution of the sample mean becomes more
+symmetric and closer to the red normal curve, and it becomes narrower. This is
+the **central limit theorem**: for large $n$, the sample mean is approximately
+normal with mean $\mu$ and standard deviation $\sigma/\sqrt{n}$, whatever the
+shape of the population.
+
+## Try it yourself
+
+1. In the coin example, make the coin unfair with
+   `sample(c(0, 1), n, replace = TRUE, prob = c(0.7, 0.3))`. Where does the
+   proportion settle?
+2. Repeat the central limit theorem experiment with a very skewed population,
+   for example `rexp(n, rate = 1)`. How large must $n$ be before the sample
+   means look normal?
+3. Use `qnorm()` to find the value that cuts off the top 2.5% of a standard
+   normal distribution. Where have you seen this number before?

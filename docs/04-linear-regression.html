@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Correlation and linear regression</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.1/jquery-3.6.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Course</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-probability-and-simulation.html">Probability and simulation</a>
+    </li>
+    <li>
+      <a href="02-confidence-intervals.html">Parameter estimation and confidence intervals</a>
+    </li>
+    <li>
+      <a href="03-hypothesis-testing.html">Hypothesis testing</a>
+    </li>
+    <li>
+      <a href="04-linear-regression.html">Correlation and linear regression</a>
+    </li>
+    <li>
+      <a href="05-logistic-regression.html">Logistic regression</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jinjiayun57/data-analysis-with-r">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Correlation and linear regression</h1>
+
+</div>
+
+
+<p><em>Session 10 of the <a href="index.html">course</a> · <a
+href="slides/10-regression.pdf">Slides for this session
+(PDF)</a></em></p>
+<p><strong>Learning goals.</strong> After this lesson you can</p>
+<ul>
+<li>distinguish Pearson and Spearman correlation and know when they
+differ;</li>
+<li>explain why correlation does not imply causation (confounding and
+reverse causation);</li>
+<li>fit, interpret and check a simple linear regression;</li>
+<li>extend a model with a polynomial term, and recognise
+multicollinearity.</li>
+</ul>
+<div id="correlation-two-ways-to-measure-association"
+class="section level2">
+<h2>Correlation: two ways to measure association</h2>
+<p>We simulate a relationship that is strong but not linear:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">500</span>, <span class="dv">1</span>, <span class="dv">10</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">3</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">*</span> <span class="fu">rchisq</span>(<span class="dv">500</span>, <span class="at">df =</span> <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">ggplot</span>(sim, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> pal[<span class="dv">5</span>], <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">colour =</span> pal[<span class="dv">2</span>])</span></code></pre></div>
+<p><img src="04-linear-regression_files/figure-html/cor-sim-1.png" width="770" /></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">cor</span>(x, y, <span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)    <span class="co"># strength of the *linear* association</span></span></code></pre></div>
+<pre><code>## [1] 0.937044</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">cor</span>(x, y, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)   <span class="co"># strength of the *monotone* association</span></span></code></pre></div>
+<pre><code>## [1] 0.9927364</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">cor.test</span>(x, y)</span></code></pre></div>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  x and y
+## t = 59.881, df = 498, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.9253929 0.9469258
+## sample estimates:
+##      cor 
+## 0.937044</code></pre>
+<p>Spearman’s correlation is based on ranks: it is close to 1 because
+<span class="math inline">\(y\)</span> almost always increases with
+<span class="math inline">\(x\)</span>. Pearson’s correlation is lower
+because the relationship is curved. The straight line in the plot misses
+the shape, and the next sections show how to detect that.</p>
+<div id="correlation-does-not-imply-causation" class="section level3">
+<h3>Correlation does not imply causation</h3>
+<p>A correlation between two variables can arise without one causing the
+other.</p>
+<p><strong>A confounding variable.</strong> Ice cream sales and drowning
+accidents are correlated, but neither causes the other: both rise in hot
+weather. In this simulation temperature drives both variables, and ice
+cream has no effect on drowning at all.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>temperature <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="dv">5</span>, <span class="dv">35</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>ice_cream <span class="ot">&lt;-</span> <span class="dv">20</span> <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> temperature <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="dv">10</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>drownings <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.2</span> <span class="sc">*</span> temperature <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">sd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="fu">cor</span>(ice_cream, drownings)</span></code></pre></div>
+<pre><code>## [1] 0.6723672</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(drownings <span class="sc">~</span> ice_cream)))[<span class="st">&quot;ice_cream&quot;</span>, ]</span></code></pre></div>
+<pre><code>##     Estimate   Std. Error      t value     Pr(&gt;|t|) 
+## 5.380760e-02 3.431535e-03 1.568033e+01 8.021576e-41</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(drownings <span class="sc">~</span> ice_cream <span class="sc">+</span> temperature)))[<span class="st">&quot;ice_cream&quot;</span>, ]</span></code></pre></div>
+<pre><code>##     Estimate   Std. Error      t value     Pr(&gt;|t|) 
+## -0.008808475  0.008237078 -1.069368944  0.285771786</code></pre>
+<p>On its own, ice cream “predicts” drownings clearly. Once temperature
+is in the model, the coefficient of ice cream is close to zero: the
+association came from the confounding variable.</p>
+<p><strong>Reverse causation.</strong> Sometimes the direction is the
+question. People who exercise more are happier, but happier people may
+also be more inclined to exercise. People with depression have lower
+vitamin D levels, but depression may lead people to spend less time
+outdoors. The data alone do not tell us which way the arrow points.</p>
+<p>Establishing causation needs more than a correlation: an experimental
+design, or methods such as fixed-effects models and instrumental
+variables that rest on explicit assumptions about how the data were
+generated.</p>
+</div>
+</div>
+<div id="simple-linear-regression" class="section level2">
+<h2>Simple linear regression</h2>
+<p>The built-in <code>women</code> data contain the average height
+(inches) and weight (pounds) of American women aged 30–39.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(weight <span class="sc">~</span> height, <span class="at">data =</span> women)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = weight ~ height, data = women)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.7333 -1.1333 -0.3833  0.7417  3.1167 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -87.51667    5.93694  -14.74 1.71e-09 ***
+## height        3.45000    0.09114   37.85 1.09e-14 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.525 on 13 degrees of freedom
+## Multiple R-squared:  0.991,  Adjusted R-squared:  0.9903 
+## F-statistic:  1433 on 1 and 13 DF,  p-value: 1.091e-14</code></pre>
+<p>The fitted equation is <span
+class="math inline">\(\widehat{\text{weight}} = -87.52 + 3.45 \times
+\text{height}\)</span>: each additional inch of height is associated
+with about 3.45 pounds more weight.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">ggplot</span>(women, <span class="fu">aes</span>(height, weight)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> pal[<span class="dv">2</span>])</span></code></pre></div>
+<p><img src="04-linear-regression_files/figure-html/slr-plot-1.png" width="770" /></p>
+<div id="checking-the-assumptions" class="section level3">
+<h3>Checking the assumptions</h3>
+<p>The residuals <span class="math inline">\(y - \hat{y}\)</span> hold
+what the model does not explain. If the model is adequate, they should
+look like random noise.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">plot</span>(fit)</span></code></pre></div>
+<p><img src="04-linear-regression_files/figure-html/slr-diagnostics-1.png" width="770" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div>
+<ol style="list-style-type: decimal">
+<li><strong>Linearity.</strong> <em>Residuals vs Fitted</em> (top left)
+should show no pattern. Here it is clearly curved: the model misses part
+of the relationship.</li>
+<li><strong>Normality of residuals.</strong> The <em>Q–Q plot</em> (top
+right) should follow the line.</li>
+<li><strong>Constant variance.</strong> <em>Scale–Location</em> (bottom
+left) should be a horizontal band.</li>
+<li><strong>Independence</strong> cannot be checked from these plots: it
+depends on how the data were collected.</li>
+</ol>
+</div>
+</div>
+<div id="polynomial-regression" class="section level2">
+<h2>Polynomial regression</h2>
+<p>The curved residual pattern suggests adding a quadratic term:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(weight <span class="sc">~</span> height <span class="sc">+</span> <span class="fu">I</span>(height<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> women)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="fu">summary</span>(fit2)<span class="sc">$</span>coefficients</span></code></pre></div>
+<pre><code>##                 Estimate   Std. Error   t value     Pr(&gt;|t|)
+## (Intercept) 261.87818358 25.196770820 10.393323 2.356879e-07
+## height       -7.34831933  0.777692280 -9.448878 6.584476e-07
+## I(height^2)   0.08306399  0.005979642 13.891131 9.322439e-09</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">c</span>(<span class="at">linear =</span> <span class="fu">summary</span>(fit)<span class="sc">$</span>adj.r.squared, <span class="at">quadratic =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>adj.r.squared)</span></code></pre></div>
+<pre><code>##    linear quadratic 
+## 0.9903183 0.9993859</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">ggplot</span>(women, <span class="fu">aes</span>(height, weight)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">formula =</span> y <span class="sc">~</span> x <span class="sc">+</span> <span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> pal[<span class="dv">4</span>])</span></code></pre></div>
+<p><img src="04-linear-regression_files/figure-html/poly-plot-1.png" width="770" /></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">plot</span>(fit2, <span class="at">which =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span></code></pre></div>
+<p><img src="04-linear-regression_files/figure-html/poly-diagnostics-1.png" width="770" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div>
+<p>The residual pattern is much weaker, and the adjusted <span
+class="math inline">\(R^2\)</span> increases.</p>
+</div>
+<div id="multiple-regression-and-multicollinearity"
+class="section level2">
+<h2>Multiple regression and multicollinearity</h2>
+<p>With several predictors, each coefficient is the association with the
+outcome <em>holding the other predictors constant</em>. This becomes
+unstable when predictors are strongly correlated with each other. We
+simulate this situation: <code>c</code> is almost a copy of
+<code>a</code>.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">80</span>, <span class="dv">100</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="dv">90</span>, <span class="dv">2</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="sc">*</span> a <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">50</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>d <span class="ot">&lt;-</span> a <span class="sc">-</span> <span class="fl">0.2</span> <span class="sc">*</span> b <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> c <span class="sc">+</span> <span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(a, b, c, d)</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(d <span class="sc">~</span> a <span class="sc">+</span> b <span class="sc">+</span> c, <span class="at">data =</span> dat))</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>model<span class="sc">$</span>coefficients</span></code></pre></div>
+<pre><code>##               Estimate Std. Error    t value     Pr(&gt;|t|)
+## (Intercept)  5.3956045 18.0255487  0.2993309 7.660359e-01
+## a            1.2100463  0.2959468  4.0887287 1.724286e-04
+## b           -0.2991602  0.1994857 -1.4996575 1.405357e-01
+## c            1.8566330  0.3671680  5.0566307 7.267129e-06</code></pre>
+<p>The true coefficients are 1 for <code>a</code> and 2 for
+<code>c</code>, but the estimates have large standard errors: the data
+cannot separate the two predictors’ contributions. The <strong>variance
+inflation factor</strong> measures this. For <code>a</code>, it is <span
+class="math inline">\(1/(1 - R^2_a)\)</span>, where <span
+class="math inline">\(R^2_a\)</span> comes from regressing
+<code>a</code> on the other predictors:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>r2_a <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(a <span class="sc">~</span> b <span class="sc">+</span> c, <span class="at">data =</span> dat))<span class="sc">$</span>r.squared</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_a)</span></code></pre></div>
+<pre><code>## [1] 22.14144</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">vif</span>(<span class="fu">lm</span>(d <span class="sc">~</span> a <span class="sc">+</span> b <span class="sc">+</span> c, <span class="at">data =</span> dat))</span></code></pre></div>
+<pre><code>##         a         b         c 
+## 22.141437  1.025742 22.174015</code></pre>
+<p>A common rule of thumb treats VIF values above 5 or 10 as a warning
+sign.</p>
+</div>
+<div id="try-it-yourself" class="section level2">
+<h2>Try it yourself</h2>
+<ol style="list-style-type: decimal">
+<li>Repeat the multicollinearity simulation with
+<code>c &lt;- 0.8 * a + rnorm(50, sd = 10)</code>. What happens to the
+VIFs and the standard errors, and why?</li>
+<li>Using the built-in <code>mtcars</code> data, regress fuel
+consumption (<code>mpg</code>) on weight (<code>wt</code>). Interpret
+the slope in words, then check the diagnostic plots.</li>
+<li>Add horsepower (<code>hp</code>) to the model in exercise 2. How
+does the coefficient of <code>wt</code> change, and how would you
+explain the change to someone without statistical training?</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQ29ycmVsYXRpb24gYW5kIGxpbmVhciByZWdyZXNzaW9uIgotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUsIGZpZy53aWR0aCA9IDcsIGZpZy5oZWlnaHQgPSA0LjUsIGRwaSA9IDExMCwKICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2UgPSBGQUxTRSkKbGlicmFyeShnZ3Bsb3QyKQpsaWJyYXJ5KFJDb2xvckJyZXdlcikKbGlicmFyeShjYXIpCnBhbCA8LSBicmV3ZXIucGFsKDgsICJQYWlyZWQiKQp0aGVtZV9zZXQodGhlbWVfYncoYmFzZV9zaXplID0gMTMpKQpzZXQuc2VlZCgxMCkKYGBgCgoqU2Vzc2lvbiAxMCBvZiB0aGUgW2NvdXJzZV0oaW5kZXguaHRtbCkgwrcgW1NsaWRlcyBmb3IgdGhpcyBzZXNzaW9uIChQREYpXShzbGlkZXMvMTAtcmVncmVzc2lvbi5wZGYpKgoKKipMZWFybmluZyBnb2Fscy4qKiBBZnRlciB0aGlzIGxlc3NvbiB5b3UgY2FuCgotIGRpc3Rpbmd1aXNoIFBlYXJzb24gYW5kIFNwZWFybWFuIGNvcnJlbGF0aW9uIGFuZCBrbm93IHdoZW4gdGhleSBkaWZmZXI7Ci0gZXhwbGFpbiB3aHkgY29ycmVsYXRpb24gZG9lcyBub3QgaW1wbHkgY2F1c2F0aW9uIChjb25mb3VuZGluZyBhbmQgcmV2ZXJzZSBjYXVzYXRpb24pOwotIGZpdCwgaW50ZXJwcmV0IGFuZCBjaGVjayBhIHNpbXBsZSBsaW5lYXIgcmVncmVzc2lvbjsKLSBleHRlbmQgYSBtb2RlbCB3aXRoIGEgcG9seW5vbWlhbCB0ZXJtLCBhbmQgcmVjb2duaXNlIG11bHRpY29sbGluZWFyaXR5LgoKIyMgQ29ycmVsYXRpb246IHR3byB3YXlzIHRvIG1lYXN1cmUgYXNzb2NpYXRpb24KCldlIHNpbXVsYXRlIGEgcmVsYXRpb25zaGlwIHRoYXQgaXMgc3Ryb25nIGJ1dCBub3QgbGluZWFyOgoKYGBge3IgY29yLXNpbX0KeCA8LSBydW5pZig1MDAsIDEsIDEwKQp5IDwtIHheMyArIDggKiByY2hpc3EoNTAwLCBkZiA9IDEpCnNpbSA8LSBkYXRhLmZyYW1lKHgsIHkpCgpnZ3Bsb3Qoc2ltLCBhZXMoeCwgeSkpICsKICBnZW9tX3BvaW50KGNvbG91ciA9IHBhbFs1XSwgYWxwaGEgPSAwLjYpICsKICBnZW9tX3Ntb290aChtZXRob2QgPSAibG0iLCBjb2xvdXIgPSBwYWxbMl0pCmBgYAoKYGBge3IgY29yLXZhbHVlc30KY29yKHgsIHksIG1ldGhvZCA9ICJwZWFyc29uIikgICAgIyBzdHJlbmd0aCBvZiB0aGUgKmxpbmVhciogYXNzb2NpYXRpb24KY29yKHgsIHksIG1ldGhvZCA9ICJzcGVhcm1hbiIpICAgIyBzdHJlbmd0aCBvZiB0aGUgKm1vbm90b25lKiBhc3NvY2lhdGlvbgpjb3IudGVzdCh4LCB5KQpgYGAKClNwZWFybWFuJ3MgY29ycmVsYXRpb24gaXMgYmFzZWQgb24gcmFua3M6IGl0IGlzIGNsb3NlIHRvIDEgYmVjYXVzZSAkeSQgYWxtb3N0CmFsd2F5cyBpbmNyZWFzZXMgd2l0aCAkeCQuIFBlYXJzb24ncyBjb3JyZWxhdGlvbiBpcyBsb3dlciBiZWNhdXNlIHRoZQpyZWxhdGlvbnNoaXAgaXMgY3VydmVkLiBUaGUgc3RyYWlnaHQgbGluZSBpbiB0aGUgcGxvdCBtaXNzZXMgdGhlIHNoYXBlLCBhbmQKdGhlIG5leHQgc2VjdGlvbnMgc2hvdyBob3cgdG8gZGV0ZWN0IHRoYXQuCgojIyMgQ29ycmVsYXRpb24gZG9lcyBub3QgaW1wbHkgY2F1c2F0aW9uCgpBIGNvcnJlbGF0aW9uIGJldHdlZW4gdHdvIHZhcmlhYmxlcyBjYW4gYXJpc2Ugd2l0aG91dCBvbmUgY2F1c2luZyB0aGUgb3RoZXIuCgoqKkEgY29uZm91bmRpbmcgdmFyaWFibGUuKiogSWNlIGNyZWFtIHNhbGVzIGFuZCBkcm93bmluZyBhY2NpZGVudHMgYXJlCmNvcnJlbGF0ZWQsIGJ1dCBuZWl0aGVyIGNhdXNlcyB0aGUgb3RoZXI6IGJvdGggcmlzZSBpbiBob3Qgd2VhdGhlci4gSW4gdGhpcwpzaW11bGF0aW9uIHRlbXBlcmF0dXJlIGRyaXZlcyBib3RoIHZhcmlhYmxlcywgYW5kIGljZSBjcmVhbSBoYXMgbm8gZWZmZWN0IG9uCmRyb3duaW5nIGF0IGFsbC4KCmBgYHtyIGNvbmZvdW5kaW5nfQpuIDwtIDMwMAp0ZW1wZXJhdHVyZSA8LSBydW5pZihuLCA1LCAzNSkKaWNlX2NyZWFtIDwtIDIwICsgMyAqIHRlbXBlcmF0dXJlICsgcm5vcm0obiwgc2QgPSAxMCkKZHJvd25pbmdzIDwtIDEgKyAwLjIgKiB0ZW1wZXJhdHVyZSArIHJub3JtKG4sIHNkID0gMS41KQpjb3IoaWNlX2NyZWFtLCBkcm93bmluZ3MpCmNvZWYoc3VtbWFyeShsbShkcm93bmluZ3MgfiBpY2VfY3JlYW0pKSlbImljZV9jcmVhbSIsIF0KY29lZihzdW1tYXJ5KGxtKGRyb3duaW5ncyB+IGljZV9jcmVhbSArIHRlbXBlcmF0dXJlKSkpWyJpY2VfY3JlYW0iLCBdCmBgYAoKT24gaXRzIG93biwgaWNlIGNyZWFtICJwcmVkaWN0cyIgZHJvd25pbmdzIGNsZWFybHkuIE9uY2UgdGVtcGVyYXR1cmUgaXMgaW4gdGhlCm1vZGVsLCB0aGUgY29lZmZpY2llbnQgb2YgaWNlIGNyZWFtIGlzIGNsb3NlIHRvIHplcm86IHRoZSBhc3NvY2lhdGlvbiBjYW1lIGZyb20KdGhlIGNvbmZvdW5kaW5nIHZhcmlhYmxlLgoKKipSZXZlcnNlIGNhdXNhdGlvbi4qKiBTb21ldGltZXMgdGhlIGRpcmVjdGlvbiBpcyB0aGUgcXVlc3Rpb24uIFBlb3BsZSB3aG8KZXhlcmNpc2UgbW9yZSBhcmUgaGFwcGllciwgYnV0IGhhcHBpZXIgcGVvcGxlIG1heSBhbHNvIGJlIG1vcmUgaW5jbGluZWQgdG8KZXhlcmNpc2UuIFBlb3BsZSB3aXRoIGRlcHJlc3Npb24gaGF2ZSBsb3dlciB2aXRhbWluIEQgbGV2ZWxzLCBidXQgZGVwcmVzc2lvbgptYXkgbGVhZCBwZW9wbGUgdG8gc3BlbmQgbGVzcyB0aW1lIG91dGRvb3JzLiBUaGUgZGF0YSBhbG9uZSBkbyBub3QgdGVsbCB1cyB3aGljaAp3YXkgdGhlIGFycm93IHBvaW50cy4KCkVzdGFibGlzaGluZyBjYXVzYXRpb24gbmVlZHMgbW9yZSB0aGFuIGEgY29ycmVsYXRpb246IGFuIGV4cGVyaW1lbnRhbCBkZXNpZ24sCm9yIG1ldGhvZHMgc3VjaCBhcyBmaXhlZC1lZmZlY3RzIG1vZGVscyBhbmQgaW5zdHJ1bWVudGFsIHZhcmlhYmxlcyB0aGF0IHJlc3Qgb24KZXhwbGljaXQgYXNzdW1wdGlvbnMgYWJvdXQgaG93IHRoZSBkYXRhIHdlcmUgZ2VuZXJhdGVkLgoKIyMgU2ltcGxlIGxpbmVhciByZWdyZXNzaW9uCgpUaGUgYnVpbHQtaW4gYHdvbWVuYCBkYXRhIGNvbnRhaW4gdGhlIGF2ZXJhZ2UgaGVpZ2h0IChpbmNoZXMpIGFuZCB3ZWlnaHQgKHBvdW5kcykKb2YgQW1lcmljYW4gd29tZW4gYWdlZCAzMOKAkzM5LgoKYGBge3Igc2xyfQpmaXQgPC0gbG0od2VpZ2h0IH4gaGVpZ2h0LCBkYXRhID0gd29tZW4pCnN1bW1hcnkoZml0KQpgYGAKClRoZSBmaXR0ZWQgZXF1YXRpb24gaXMKJFx3aWRlaGF0e1x0ZXh0e3dlaWdodH19ID0gYHIgcm91bmQoY29lZihmaXQpWzFdLCAyKWAgKyBgciByb3VuZChjb2VmKGZpdClbMl0sIDIpYCBcdGltZXMgXHRleHR7aGVpZ2h0fSQ6CmVhY2ggYWRkaXRpb25hbCBpbmNoIG9mIGhlaWdodCBpcyBhc3NvY2lhdGVkIHdpdGggYWJvdXQKYHIgcm91bmQoY29lZihmaXQpWzJdLCAyKWAgcG91bmRzIG1vcmUgd2VpZ2h0LgoKYGBge3Igc2xyLXBsb3R9CmdncGxvdCh3b21lbiwgYWVzKGhlaWdodCwgd2VpZ2h0KSkgKwogIGdlb21fcG9pbnQoc2l6ZSA9IDIpICsKICBnZW9tX3Ntb290aChtZXRob2QgPSAibG0iLCBzZSA9IEZBTFNFLCBjb2xvdXIgPSBwYWxbMl0pCmBgYAoKIyMjIENoZWNraW5nIHRoZSBhc3N1bXB0aW9ucwoKVGhlIHJlc2lkdWFscyAkeSAtIFxoYXR7eX0kIGhvbGQgd2hhdCB0aGUgbW9kZWwgZG9lcyBub3QgZXhwbGFpbi4gSWYgdGhlIG1vZGVsCmlzIGFkZXF1YXRlLCB0aGV5IHNob3VsZCBsb29rIGxpa2UgcmFuZG9tIG5vaXNlLgoKYGBge3Igc2xyLWRpYWdub3N0aWNzLCBmaWcuaGVpZ2h0ID0gNi41fQpwYXIobWZyb3cgPSBjKDIsIDIpKQpwbG90KGZpdCkKcGFyKG1mcm93ID0gYygxLCAxKSkKYGBgCgoxLiAqKkxpbmVhcml0eS4qKiAqUmVzaWR1YWxzIHZzIEZpdHRlZCogKHRvcCBsZWZ0KSBzaG91bGQgc2hvdyBubyBwYXR0ZXJuLiBIZXJlCiAgIGl0IGlzIGNsZWFybHkgY3VydmVkOiB0aGUgbW9kZWwgbWlzc2VzIHBhcnQgb2YgdGhlIHJlbGF0aW9uc2hpcC4KMi4gKipOb3JtYWxpdHkgb2YgcmVzaWR1YWxzLioqIFRoZSAqUeKAk1EgcGxvdCogKHRvcCByaWdodCkgc2hvdWxkIGZvbGxvdyB0aGUgbGluZS4KMy4gKipDb25zdGFudCB2YXJpYW5jZS4qKiAqU2NhbGXigJNMb2NhdGlvbiogKGJvdHRvbSBsZWZ0KSBzaG91bGQgYmUgYSBob3Jpem9udGFsCiAgIGJhbmQuCjQuICoqSW5kZXBlbmRlbmNlKiogY2Fubm90IGJlIGNoZWNrZWQgZnJvbSB0aGVzZSBwbG90czogaXQgZGVwZW5kcyBvbiBob3cgdGhlIGRhdGEKICAgd2VyZSBjb2xsZWN0ZWQuCgojIyBQb2x5bm9taWFsIHJlZ3Jlc3Npb24KClRoZSBjdXJ2ZWQgcmVzaWR1YWwgcGF0dGVybiBzdWdnZXN0cyBhZGRpbmcgYSBxdWFkcmF0aWMgdGVybToKCmBgYHtyIHBvbHl9CmZpdDIgPC0gbG0od2VpZ2h0IH4gaGVpZ2h0ICsgSShoZWlnaHReMiksIGRhdGEgPSB3b21lbikKc3VtbWFyeShmaXQyKSRjb2VmZmljaWVudHMKYyhsaW5lYXIgPSBzdW1tYXJ5KGZpdCkkYWRqLnIuc3F1YXJlZCwgcXVhZHJhdGljID0gc3VtbWFyeShmaXQyKSRhZGouci5zcXVhcmVkKQpgYGAKCmBgYHtyIHBvbHktcGxvdH0KZ2dwbG90KHdvbWVuLCBhZXMoaGVpZ2h0LCB3ZWlnaHQpKSArCiAgZ2VvbV9wb2ludChzaXplID0gMikgKwogIGdlb21fc21vb3RoKG1ldGhvZCA9ICJsbSIsIGZvcm11bGEgPSB5IH4geCArIEkoeF4yKSwgc2UgPSBGQUxTRSwgY29sb3VyID0gcGFsWzRdKQpgYGAKCmBgYHtyIHBvbHktZGlhZ25vc3RpY3MsIGZpZy5oZWlnaHQgPSAzLjV9CnBhcihtZnJvdyA9IGMoMSwgMikpCnBsb3QoZml0Miwgd2hpY2ggPSAxOjIpCnBhcihtZnJvdyA9IGMoMSwgMSkpCmBgYAoKVGhlIHJlc2lkdWFsIHBhdHRlcm4gaXMgbXVjaCB3ZWFrZXIsIGFuZCB0aGUgYWRqdXN0ZWQgJFJeMiQgaW5jcmVhc2VzLgoKIyMgTXVsdGlwbGUgcmVncmVzc2lvbiBhbmQgbXVsdGljb2xsaW5lYXJpdHkKCldpdGggc2V2ZXJhbCBwcmVkaWN0b3JzLCBlYWNoIGNvZWZmaWNpZW50IGlzIHRoZSBhc3NvY2lhdGlvbiB3aXRoIHRoZSBvdXRjb21lCipob2xkaW5nIHRoZSBvdGhlciBwcmVkaWN0b3JzIGNvbnN0YW50Ki4gVGhpcyBiZWNvbWVzIHVuc3RhYmxlIHdoZW4gcHJlZGljdG9ycwphcmUgc3Ryb25nbHkgY29ycmVsYXRlZCB3aXRoIGVhY2ggb3RoZXIuIFdlIHNpbXVsYXRlIHRoaXMgc2l0dWF0aW9uOiBgY2AgaXMKYWxtb3N0IGEgY29weSBvZiBgYWAuCgpgYGB7ciBjb2xsaW5lYXJ9CmEgPC0gcnVuaWYoNTAsIDgwLCAxMDApCmIgPC0gcm5vcm0oNTAsIDkwLCAyKQpjIDwtIDAuOCAqIGEgKyBybm9ybSg1MCkKZCA8LSBhIC0gMC4yICogYiArIDIgKiBjICsgcnVuaWYoNTAsIDAsIDEwKQpkYXQgPC0gZGF0YS5mcmFtZShhLCBiLCBjLCBkKQoKbW9kZWwgPC0gc3VtbWFyeShsbShkIH4gYSArIGIgKyBjLCBkYXRhID0gZGF0KSkKbW9kZWwkY29lZmZpY2llbnRzCmBgYAoKVGhlIHRydWUgY29lZmZpY2llbnRzIGFyZSAxIGZvciBgYWAgYW5kIDIgZm9yIGBjYCwgYnV0IHRoZSBlc3RpbWF0ZXMgaGF2ZSBsYXJnZQpzdGFuZGFyZCBlcnJvcnM6IHRoZSBkYXRhIGNhbm5vdCBzZXBhcmF0ZSB0aGUgdHdvIHByZWRpY3RvcnMnIGNvbnRyaWJ1dGlvbnMuClRoZSAqKnZhcmlhbmNlIGluZmxhdGlvbiBmYWN0b3IqKiBtZWFzdXJlcyB0aGlzLiBGb3IgYGFgLCBpdCBpcwokMS8oMSAtIFJeMl9hKSQsIHdoZXJlICRSXjJfYSQgY29tZXMgZnJvbSByZWdyZXNzaW5nIGBhYCBvbiB0aGUgb3RoZXIKcHJlZGljdG9yczoKCmBgYHtyIHZpZn0KcjJfYSA8LSBzdW1tYXJ5KGxtKGEgfiBiICsgYywgZGF0YSA9IGRhdCkpJHIuc3F1YXJlZAoxIC8gKDEgLSByMl9hKQp2aWYobG0oZCB+IGEgKyBiICsgYywgZGF0YSA9IGRhdCkpCmBgYAoKQSBjb21tb24gcnVsZSBvZiB0aHVtYiB0cmVhdHMgVklGIHZhbHVlcyBhYm92ZSA1IG9yIDEwIGFzIGEgd2FybmluZyBzaWduLgoKIyMgVHJ5IGl0IHlvdXJzZWxmCgoxLiBSZXBlYXQgdGhlIG11bHRpY29sbGluZWFyaXR5IHNpbXVsYXRpb24gd2l0aCBgYyA8LSAwLjggKiBhICsgcm5vcm0oNTAsIHNkID0gMTApYC4KICAgV2hhdCBoYXBwZW5zIHRvIHRoZSBWSUZzIGFuZCB0aGUgc3RhbmRhcmQgZXJyb3JzLCBhbmQgd2h5PwoyLiBVc2luZyB0aGUgYnVpbHQtaW4gYG10Y2Fyc2AgZGF0YSwgcmVncmVzcyBmdWVsIGNvbnN1bXB0aW9uIChgbXBnYCkgb24gd2VpZ2h0CiAgIChgd3RgKS4gSW50ZXJwcmV0IHRoZSBzbG9wZSBpbiB3b3JkcywgdGhlbiBjaGVjayB0aGUgZGlhZ25vc3RpYyBwbG90cy4KMy4gQWRkIGhvcnNlcG93ZXIgKGBocGApIHRvIHRoZSBtb2RlbCBpbiBleGVyY2lzZSAyLiBIb3cgZG9lcyB0aGUgY29lZmZpY2llbnQgb2YKICAgYHd0YCBjaGFuZ2UsIGFuZCBob3cgd291bGQgeW91IGV4cGxhaW4gdGhlIGNoYW5nZSB0byBzb21lb25lIHdpdGhvdXQKICAgc3RhdGlzdGljYWwgdHJhaW5pbmc/Cg==</div>
+<hr>
+<p style="font-size:0.85em;color:#666">Jiayun Jin · Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the MIT License.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("04-linear-regression.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

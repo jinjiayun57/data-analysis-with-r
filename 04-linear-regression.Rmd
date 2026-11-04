@@ -1,0 +1,187 @@
+---
+title: "Correlation and linear regression"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 7, fig.height = 4.5, dpi = 110,
+                      message = FALSE)
+library(ggplot2)
+library(RColorBrewer)
+library(car)
+pal <- brewer.pal(8, "Paired")
+theme_set(theme_bw(base_size = 13))
+set.seed(10)
+```
+
+*Session 10 of the [course](index.html) · [Slides for this session (PDF)](slides/10-regression.pdf)*
+
+**Learning goals.** After this lesson you can
+
+- distinguish Pearson and Spearman correlation and know when they differ;
+- explain why correlation does not imply causation (confounding and reverse causation);
+- fit, interpret and check a simple linear regression;
+- extend a model with a polynomial term, and recognise multicollinearity.
+
+## Correlation: two ways to measure association
+
+We simulate a relationship that is strong but not linear:
+
+```{r cor-sim}
+x <- runif(500, 1, 10)
+y <- x^3 + 8 * rchisq(500, df = 1)
+sim <- data.frame(x, y)
+
+ggplot(sim, aes(x, y)) +
+  geom_point(colour = pal[5], alpha = 0.6) +
+  geom_smooth(method = "lm", colour = pal[2])
+```
+
+```{r cor-values}
+cor(x, y, method = "pearson")    # strength of the *linear* association
+cor(x, y, method = "spearman")   # strength of the *monotone* association
+cor.test(x, y)
+```
+
+Spearman's correlation is based on ranks: it is close to 1 because $y$ almost
+always increases with $x$. Pearson's correlation is lower because the
+relationship is curved. The straight line in the plot misses the shape, and
+the next sections show how to detect that.
+
+### Correlation does not imply causation
+
+A correlation between two variables can arise without one causing the other.
+
+**A confounding variable.** Ice cream sales and drowning accidents are
+correlated, but neither causes the other: both rise in hot weather. In this
+simulation temperature drives both variables, and ice cream has no effect on
+drowning at all.
+
+```{r confounding}
+n <- 300
+temperature <- runif(n, 5, 35)
+ice_cream <- 20 + 3 * temperature + rnorm(n, sd = 10)
+drownings <- 1 + 0.2 * temperature + rnorm(n, sd = 1.5)
+cor(ice_cream, drownings)
+coef(summary(lm(drownings ~ ice_cream)))["ice_cream", ]
+coef(summary(lm(drownings ~ ice_cream + temperature)))["ice_cream", ]
+```
+
+On its own, ice cream "predicts" drownings clearly. Once temperature is in the
+model, the coefficient of ice cream is close to zero: the association came from
+the confounding variable.
+
+**Reverse causation.** Sometimes the direction is the question. People who
+exercise more are happier, but happier people may also be more inclined to
+exercise. People with depression have lower vitamin D levels, but depression
+may lead people to spend less time outdoors. The data alone do not tell us which
+way the arrow points.
+
+Establishing causation needs more than a correlation: an experimental design,
+or methods such as fixed-effects models and instrumental variables that rest on
+explicit assumptions about how the data were generated.
+
+## Simple linear regression
+
+The built-in `women` data contain the average height (inches) and weight (pounds)
+of American women aged 30–39.
+
+```{r slr}
+fit <- lm(weight ~ height, data = women)
+summary(fit)
+```
+
+The fitted equation is
+$\widehat{\text{weight}} = `r round(coef(fit)[1], 2)` + `r round(coef(fit)[2], 2)` \times \text{height}$:
+each additional inch of height is associated with about
+`r round(coef(fit)[2], 2)` pounds more weight.
+
+```{r slr-plot}
+ggplot(women, aes(height, weight)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = pal[2])
+```
+
+### Checking the assumptions
+
+The residuals $y - \hat{y}$ hold what the model does not explain. If the model
+is adequate, they should look like random noise.
+
+```{r slr-diagnostics, fig.height = 6.5}
+par(mfrow = c(2, 2))
+plot(fit)
+par(mfrow = c(1, 1))
+```
+
+1. **Linearity.** *Residuals vs Fitted* (top left) should show no pattern. Here
+   it is clearly curved: the model misses part of the relationship.
+2. **Normality of residuals.** The *Q–Q plot* (top right) should follow the line.
+3. **Constant variance.** *Scale–Location* (bottom left) should be a horizontal
+   band.
+4. **Independence** cannot be checked from these plots: it depends on how the data
+   were collected.
+
+## Polynomial regression
+
+The curved residual pattern suggests adding a quadratic term:
+
+```{r poly}
+fit2 <- lm(weight ~ height + I(height^2), data = women)
+summary(fit2)$coefficients
+c(linear = summary(fit)$adj.r.squared, quadratic = summary(fit2)$adj.r.squared)
+```
+
+```{r poly-plot}
+ggplot(women, aes(height, weight)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2), se = FALSE, colour = pal[4])
+```
+
+```{r poly-diagnostics, fig.height = 3.5}
+par(mfrow = c(1, 2))
+plot(fit2, which = 1:2)
+par(mfrow = c(1, 1))
+```
+
+The residual pattern is much weaker, and the adjusted $R^2$ increases.
+
+## Multiple regression and multicollinearity
+
+With several predictors, each coefficient is the association with the outcome
+*holding the other predictors constant*. This becomes unstable when predictors
+are strongly correlated with each other. We simulate this situation: `c` is
+almost a copy of `a`.
+
+```{r collinear}
+a <- runif(50, 80, 100)
+b <- rnorm(50, 90, 2)
+c <- 0.8 * a + rnorm(50)
+d <- a - 0.2 * b + 2 * c + runif(50, 0, 10)
+dat <- data.frame(a, b, c, d)
+
+model <- summary(lm(d ~ a + b + c, data = dat))
+model$coefficients
+```
+
+The true coefficients are 1 for `a` and 2 for `c`, but the estimates have large
+standard errors: the data cannot separate the two predictors' contributions.
+The **variance inflation factor** measures this. For `a`, it is
+$1/(1 - R^2_a)$, where $R^2_a$ comes from regressing `a` on the other
+predictors:
+
+```{r vif}
+r2_a <- summary(lm(a ~ b + c, data = dat))$r.squared
+1 / (1 - r2_a)
+vif(lm(d ~ a + b + c, data = dat))
+```
+
+A common rule of thumb treats VIF values above 5 or 10 as a warning sign.
+
+## Try it yourself
+
+1. Repeat the multicollinearity simulation with `c <- 0.8 * a + rnorm(50, sd = 10)`.
+   What happens to the VIFs and the standard errors, and why?
+2. Using the built-in `mtcars` data, regress fuel consumption (`mpg`) on weight
+   (`wt`). Interpret the slope in words, then check the diagnostic plots.
+3. Add horsepower (`hp`) to the model in exercise 2. How does the coefficient of
+   `wt` change, and how would you explain the change to someone without
+   statistical training?

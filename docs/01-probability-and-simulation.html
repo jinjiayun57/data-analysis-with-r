@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Probability and simulation</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.1/jquery-3.6.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Analysis with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Course</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-probability-and-simulation.html">Probability and simulation</a>
+    </li>
+    <li>
+      <a href="02-confidence-intervals.html">Parameter estimation and confidence intervals</a>
+    </li>
+    <li>
+      <a href="03-hypothesis-testing.html">Hypothesis testing</a>
+    </li>
+    <li>
+      <a href="04-linear-regression.html">Correlation and linear regression</a>
+    </li>
+    <li>
+      <a href="05-logistic-regression.html">Logistic regression</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jinjiayun57/data-analysis-with-r">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Probability and simulation</h1>
+
+</div>
+
+
+<p><em>Session 5 of the <a href="index.html">course</a> · <a
+href="slides/05-probability-and-distributions.pdf">Slides for this
+session (PDF)</a></em></p>
+<p><strong>Learning goals.</strong> After this lesson you can</p>
+<ul>
+<li>explain why a relative frequency settles down as the number of
+trials grows;</li>
+<li>use R’s <code>d</code>, <code>p</code>, <code>q</code> and
+<code>r</code> functions for the binomial, Poisson and normal
+distributions;</li>
+<li>describe what the central limit theorem says, after seeing it happen
+in a simulation.</li>
+</ul>
+<p>An important part of learning R is to experiment and play: change the
+numbers in the code and see what happens.</p>
+<div id="random-events-flipping-a-coin" class="section level2">
+<h2>Random events: flipping a coin</h2>
+<p>What does it mean that the probability of heads is 0.5? We cannot see
+it in one flip. But we can flip a (simulated) coin many times and watch
+the proportion of heads.</p>
+<p><code>sample()</code> draws heads (1) or tails (0) at random, and
+<code>cumsum()</code> lets us compute the proportion of heads after each
+flip.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20000</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>coin_flips <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">size =</span> n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>running_proportion <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(coin_flips) <span class="sc">/</span> <span class="fu">seq_len</span>(n)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">plot</span>(running_proportion, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">col =</span> pal[<span class="dv">2</span>], <span class="at">log =</span> <span class="st">&quot;x&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Number of flips (log scale)&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Proportion of heads&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;The proportion of heads settles down near 0.5&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.5</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="01-probability-and-simulation_files/figure-html/coin-1.png" width="770" /></p>
+<p>After a few flips the proportion jumps around a lot; after thousands
+of flips it stays close to 0.5. This is the <strong>law of large
+numbers</strong>: probability is the long-run relative frequency.</p>
+</div>
+<div id="discrete-distributions" class="section level2">
+<h2>Discrete distributions</h2>
+<div id="binomial" class="section level3">
+<h3>Binomial</h3>
+<p>The binomial distribution counts the number of successes in <span
+class="math inline">\(n\)</span> independent trials, each with success
+probability <span class="math inline">\(p\)</span>. Typical examples:
+the number of patients out of 100 who experience a side effect of a
+medication (with <span class="math inline">\(p = 0.05\)</span>), the
+number of fraudulent transactions among 50, or the number of returned
+orders in a week. <code>dbinom()</code> gives the probability of each
+possible count. Here are 80 trials with three different values of <span
+class="math inline">\(p\)</span>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">80</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">dbinom</span>(x, <span class="at">size =</span> <span class="dv">80</span>, <span class="at">prob =</span> <span class="fl">0.5</span>), <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">2</span>],</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Number of successes&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;P(X = x)&quot;</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.15</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">lines</span>(x <span class="sc">+</span> <span class="fl">0.3</span>, <span class="fu">dbinom</span>(x, <span class="at">size =</span> <span class="dv">80</span>, <span class="at">prob =</span> <span class="fl">0.8</span>), <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">4</span>])</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">lines</span>(x <span class="sc">+</span> <span class="fl">0.6</span>, <span class="fu">dbinom</span>(x, <span class="at">size =</span> <span class="dv">80</span>, <span class="at">prob =</span> <span class="fl">0.9</span>), <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">6</span>])</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topleft&quot;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&quot;p = 0.5&quot;</span>, <span class="st">&quot;p = 0.8&quot;</span>, <span class="st">&quot;p = 0.9&quot;</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>       <span class="at">col =</span> pal[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>)], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
+<p><img src="01-probability-and-simulation_files/figure-html/binomial-1.png" width="770" /></p>
+<p>Probabilities over all possible counts sum to one, and the variance
+of simulated counts is close to the theoretical value <span
+class="math inline">\(np(1-p)\)</span>:</p>
+<p><em>Exercise.</em> If each of 100 patients has a 5% chance of a side
+effect, what is the probability that more than 10 patients experience
+it?</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pbinom</span>(<span class="dv">10</span>, <span class="at">size =</span> <span class="dv">100</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## [1] 0.01147241</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">dbinom</span>(x, <span class="dv">80</span>, <span class="fl">0.5</span>))</span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">var</span>(<span class="fu">rbinom</span>(<span class="dv">100000</span>, <span class="at">size =</span> <span class="dv">80</span>, <span class="at">prob =</span> <span class="fl">0.5</span>))   <span class="co"># simulation</span></span></code></pre></div>
+<pre><code>## [1] 20.00903</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="dv">80</span> <span class="sc">*</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fl">0.5</span>                               <span class="co"># theory</span></span></code></pre></div>
+<pre><code>## [1] 20</code></pre>
+</div>
+<div id="poisson" class="section level3">
+<h3>Poisson</h3>
+<p>The Poisson distribution describes counts of events in a fixed
+interval (for example, the number of patients arriving at an emergency
+department in an hour), with mean <span
+class="math inline">\(\lambda\)</span>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">60</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>lambdas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">40</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">dpois</span>(x, lambdas[<span class="dv">1</span>]), <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">1</span>],</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Number of events&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;P(X = x)&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;Poisson distributions&quot;</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>) <span class="fu">lines</span>(x, <span class="fu">dpois</span>(x, lambdas[k]), <span class="at">type =</span> <span class="st">&quot;h&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> pal[<span class="dv">2</span> <span class="sc">*</span> k <span class="sc">-</span> <span class="dv">1</span>])</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> lambdas, <span class="at">title =</span> <span class="fu">expression</span>(lambda),</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>       <span class="at">col =</span> pal[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>)], <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
+<p><img src="01-probability-and-simulation_files/figure-html/poisson-1.png" width="770" /></p>
+<p><em>Exercise.</em> With <span class="math inline">\(\lambda =
+5\)</span>, what is the probability of observing at most three
+events?</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">dpois</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">lambda =</span> <span class="dv">5</span>))</span></code></pre></div>
+<pre><code>## [1] 0.2650259</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">ppois</span>(<span class="dv">3</span>, <span class="at">lambda =</span> <span class="dv">5</span>)   <span class="co"># the same, using the cumulative distribution function</span></span></code></pre></div>
+<pre><code>## [1] 0.2650259</code></pre>
+</div>
+</div>
+<div id="the-normal-distribution" class="section level2">
+<h2>The normal distribution</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">11</span>, <span class="fl">0.01</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">plot</span>(x, <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">1</span>), <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">col =</span> pal[<span class="dv">2</span>],</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;x&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;f(x)&quot;</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">1</span>), <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">col =</span> pal[<span class="dv">4</span>])</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="fu">lines</span>(x, <span class="fu">dnorm</span>(x, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">2</span>), <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">col =</span> pal[<span class="dv">6</span>])</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;topright&quot;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&quot;N(2, 1)&quot;</span>, <span class="st">&quot;N(5, 1)&quot;</span>, <span class="st">&quot;N(5, 4)&quot;</span>),</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>       <span class="at">col =</span> pal[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>)], <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">bty =</span> <span class="st">&quot;n&quot;</span>)</span></code></pre></div>
+<p><img src="01-probability-and-simulation_files/figure-html/normal-1.png" width="770" /></p>
+<p>How much probability lies within one, two and three standard
+deviations of the mean?</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">1</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## [1] 0.6826895</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">2</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## [1] 0.9544997</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">3</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="dv">3</span>)</span></code></pre></div>
+<pre><code>## [1] 0.9973002</code></pre>
+<div id="d-p-q-and-r" class="section level3">
+<h3><code>d</code>, <code>p</code>, <code>q</code> and
+<code>r</code></h3>
+<p>Every distribution in R comes with four functions. For the normal
+distribution:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Returns</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dnorm(x)</code></td>
+<td>density at <code>x</code></td>
+<td>height of the curve</td>
+</tr>
+<tr class="even">
+<td><code>pnorm(q)</code></td>
+<td><span class="math inline">\(P(X \le q)\)</span></td>
+<td>area to the left of <code>q</code></td>
+</tr>
+<tr class="odd">
+<td><code>qnorm(p)</code></td>
+<td>the value with area <code>p</code> to its left</td>
+<td>inverse of <code>pnorm</code></td>
+</tr>
+<tr class="even">
+<td><code>rnorm(n)</code></td>
+<td><code>n</code> random draws</td>
+<td>simulation</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">0</span>)</span></code></pre></div>
+<pre><code>## [1] 0.5</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fl">0.975</span>)</span></code></pre></div>
+<pre><code>## [1] 1.959964</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="fu">qnorm</span>(<span class="fl">0.8</span>))   <span class="co"># qnorm and pnorm undo each other</span></span></code></pre></div>
+<pre><code>## [1] 0.8</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fu">pnorm</span>(<span class="sc">-</span><span class="dv">1</span>))</span></code></pre></div>
+<pre><code>## [1] -1</code></pre>
+</div>
+</div>
+<div id="the-central-limit-theorem-by-experiment"
+class="section level2">
+<h2>The central limit theorem, by experiment</h2>
+<p>Suppose a population follows a Poisson distribution with <span
+class="math inline">\(\lambda = 3\)</span>: it is discrete and skewed,
+nothing like a normal curve. We draw many samples from it, compute each
+sample’s mean, and look at the distribution of those means.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(<span class="fu">factor</span>(<span class="fu">rpois</span>(<span class="dv">10000</span>, lambda), <span class="at">levels =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>)) <span class="sc">/</span> <span class="dv">10000</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>        <span class="at">col =</span> pal[<span class="dv">1</span>], <span class="at">main =</span> <span class="st">&quot;Population: Poisson(3)&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Proportion&quot;</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">10</span>, <span class="dv">50</span>)) {</span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_samples, <span class="fu">mean</span>(<span class="fu">rpois</span>(n, lambda)))</span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>  <span class="fu">hist</span>(means, <span class="at">breaks =</span> <span class="dv">40</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> pal[<span class="dv">3</span>], <span class="at">border =</span> <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">&quot;Means of samples of size&quot;</span>, n), <span class="at">xlab =</span> <span class="st">&quot;Sample mean&quot;</span>)</span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a>  <span class="fu">curve</span>(<span class="fu">dnorm</span>(x, <span class="at">mean =</span> lambda, <span class="at">sd =</span> <span class="fu">sqrt</span>(lambda <span class="sc">/</span> n)), <span class="at">add =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>}</span></code></pre></div>
+<p><img src="01-probability-and-simulation_files/figure-html/clt-1.png" width="770" /></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div>
+<p>As the sample size grows, the distribution of the sample mean becomes
+more symmetric and closer to the red normal curve, and it becomes
+narrower. This is the <strong>central limit theorem</strong>: for large
+<span class="math inline">\(n\)</span>, the sample mean is approximately
+normal with mean <span class="math inline">\(\mu\)</span> and standard
+deviation <span class="math inline">\(\sigma/\sqrt{n}\)</span>, whatever
+the shape of the population.</p>
+</div>
+<div id="try-it-yourself" class="section level2">
+<h2>Try it yourself</h2>
+<ol style="list-style-type: decimal">
+<li>In the coin example, make the coin unfair with
+<code>sample(c(0, 1), n, replace = TRUE, prob = c(0.7, 0.3))</code>.
+Where does the proportion settle?</li>
+<li>Repeat the central limit theorem experiment with a very skewed
+population, for example <code>rexp(n, rate = 1)</code>. How large must
+<span class="math inline">\(n\)</span> be before the sample means look
+normal?</li>
+<li>Use <code>qnorm()</code> to find the value that cuts off the top
+2.5% of a standard normal distribution. Where have you seen this number
+before?</li>
+</ol>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvYmFiaWxpdHkgYW5kIHNpbXVsYXRpb24iCi0tLQoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSwgZmlnLndpZHRoID0gNywgZmlnLmhlaWdodCA9IDQuNSwgZHBpID0gMTEwKQpsaWJyYXJ5KFJDb2xvckJyZXdlcikKcGFsIDwtIGJyZXdlci5wYWwoOCwgIlBhaXJlZCIpCnNldC5zZWVkKDIwMjQpCmBgYAoKKlNlc3Npb24gNSBvZiB0aGUgW2NvdXJzZV0oaW5kZXguaHRtbCkgwrcgW1NsaWRlcyBmb3IgdGhpcyBzZXNzaW9uIChQREYpXShzbGlkZXMvMDUtcHJvYmFiaWxpdHktYW5kLWRpc3RyaWJ1dGlvbnMucGRmKSoKCioqTGVhcm5pbmcgZ29hbHMuKiogQWZ0ZXIgdGhpcyBsZXNzb24geW91IGNhbgoKLSBleHBsYWluIHdoeSBhIHJlbGF0aXZlIGZyZXF1ZW5jeSBzZXR0bGVzIGRvd24gYXMgdGhlIG51bWJlciBvZiB0cmlhbHMgZ3Jvd3M7Ci0gdXNlIFIncyBgZGAsIGBwYCwgYHFgIGFuZCBgcmAgZnVuY3Rpb25zIGZvciB0aGUgYmlub21pYWwsIFBvaXNzb24gYW5kIG5vcm1hbAogIGRpc3RyaWJ1dGlvbnM7Ci0gZGVzY3JpYmUgd2hhdCB0aGUgY2VudHJhbCBsaW1pdCB0aGVvcmVtIHNheXMsIGFmdGVyIHNlZWluZyBpdCBoYXBwZW4gaW4gYQogIHNpbXVsYXRpb24uCgpBbiBpbXBvcnRhbnQgcGFydCBvZiBsZWFybmluZyBSIGlzIHRvIGV4cGVyaW1lbnQgYW5kIHBsYXk6IGNoYW5nZSB0aGUgbnVtYmVycwppbiB0aGUgY29kZSBhbmQgc2VlIHdoYXQgaGFwcGVucy4KCiMjIFJhbmRvbSBldmVudHM6IGZsaXBwaW5nIGEgY29pbgoKV2hhdCBkb2VzIGl0IG1lYW4gdGhhdCB0aGUgcHJvYmFiaWxpdHkgb2YgaGVhZHMgaXMgMC41PyBXZSBjYW5ub3Qgc2VlIGl0IGluCm9uZSBmbGlwLiBCdXQgd2UgY2FuIGZsaXAgYSAoc2ltdWxhdGVkKSBjb2luIG1hbnkgdGltZXMgYW5kIHdhdGNoIHRoZQpwcm9wb3J0aW9uIG9mIGhlYWRzLgoKYHNhbXBsZSgpYCBkcmF3cyBoZWFkcyAoMSkgb3IgdGFpbHMgKDApIGF0IHJhbmRvbSwgYW5kIGBjdW1zdW0oKWAgbGV0cyB1cwpjb21wdXRlIHRoZSBwcm9wb3J0aW9uIG9mIGhlYWRzIGFmdGVyIGVhY2ggZmxpcC4KCmBgYHtyIGNvaW59Cm4gPC0gMjAwMDAKY29pbl9mbGlwcyA8LSBzYW1wbGUoYygwLCAxKSwgc2l6ZSA9IG4sIHJlcGxhY2UgPSBUUlVFKQpydW5uaW5nX3Byb3BvcnRpb24gPC0gY3Vtc3VtKGNvaW5fZmxpcHMpIC8gc2VxX2xlbihuKQoKcGxvdChydW5uaW5nX3Byb3BvcnRpb24sIHR5cGUgPSAibCIsIGNvbCA9IHBhbFsyXSwgbG9nID0gIngiLAogICAgIHhsYWIgPSAiTnVtYmVyIG9mIGZsaXBzIChsb2cgc2NhbGUpIiwgeWxhYiA9ICJQcm9wb3J0aW9uIG9mIGhlYWRzIiwKICAgICBtYWluID0gIlRoZSBwcm9wb3J0aW9uIG9mIGhlYWRzIHNldHRsZXMgZG93biBuZWFyIDAuNSIpCmFibGluZShoID0gMC41LCBjb2wgPSAicmVkIiwgbHdkID0gMikKYGBgCgpBZnRlciBhIGZldyBmbGlwcyB0aGUgcHJvcG9ydGlvbiBqdW1wcyBhcm91bmQgYSBsb3Q7IGFmdGVyIHRob3VzYW5kcyBvZiBmbGlwcwppdCBzdGF5cyBjbG9zZSB0byAwLjUuIFRoaXMgaXMgdGhlICoqbGF3IG9mIGxhcmdlIG51bWJlcnMqKjogcHJvYmFiaWxpdHkgaXMgdGhlCmxvbmctcnVuIHJlbGF0aXZlIGZyZXF1ZW5jeS4KCiMjIERpc2NyZXRlIGRpc3RyaWJ1dGlvbnMKCiMjIyBCaW5vbWlhbAoKVGhlIGJpbm9taWFsIGRpc3RyaWJ1dGlvbiBjb3VudHMgdGhlIG51bWJlciBvZiBzdWNjZXNzZXMgaW4gJG4kIGluZGVwZW5kZW50CnRyaWFscywgZWFjaCB3aXRoIHN1Y2Nlc3MgcHJvYmFiaWxpdHkgJHAkLiBUeXBpY2FsIGV4YW1wbGVzOiB0aGUgbnVtYmVyIG9mIHBhdGllbnRzCm91dCBvZiAxMDAgd2hvIGV4cGVyaWVuY2UgYSBzaWRlIGVmZmVjdCBvZiBhIG1lZGljYXRpb24gKHdpdGggJHAgPSAwLjA1JCksIHRoZQpudW1iZXIgb2YgZnJhdWR1bGVudCB0cmFuc2FjdGlvbnMgYW1vbmcgNTAsIG9yIHRoZSBudW1iZXIgb2YgcmV0dXJuZWQgb3JkZXJzCmluIGEgd2Vlay4gYGRiaW5vbSgpYCBnaXZlcyB0aGUgcHJvYmFiaWxpdHkgb2YKZWFjaCBwb3NzaWJsZSBjb3VudC4gSGVyZSBhcmUgODAgdHJpYWxzIHdpdGggdGhyZWUgZGlmZmVyZW50IHZhbHVlcyBvZiAkcCQ6CgpgYGB7ciBiaW5vbWlhbH0KeCA8LSAwOjgwCnBsb3QoeCwgZGJpbm9tKHgsIHNpemUgPSA4MCwgcHJvYiA9IDAuNSksIHR5cGUgPSAiaCIsIGx3ZCA9IDIsIGNvbCA9IHBhbFsyXSwKICAgICB4bGFiID0gIk51bWJlciBvZiBzdWNjZXNzZXMiLCB5bGFiID0gIlAoWCA9IHgpIiwgeWxpbSA9IGMoMCwgMC4xNSkpCmxpbmVzKHggKyAwLjMsIGRiaW5vbSh4LCBzaXplID0gODAsIHByb2IgPSAwLjgpLCB0eXBlID0gImgiLCBsd2QgPSAyLCBjb2wgPSBwYWxbNF0pCmxpbmVzKHggKyAwLjYsIGRiaW5vbSh4LCBzaXplID0gODAsIHByb2IgPSAwLjkpLCB0eXBlID0gImgiLCBsd2QgPSAyLCBjb2wgPSBwYWxbNl0pCmxlZ2VuZCgidG9wbGVmdCIsIGxlZ2VuZCA9IGMoInAgPSAwLjUiLCAicCA9IDAuOCIsICJwID0gMC45IiksCiAgICAgICBjb2wgPSBwYWxbYygyLCA0LCA2KV0sIGx3ZCA9IDIsIGJ0eSA9ICJuIikKYGBgCgpQcm9iYWJpbGl0aWVzIG92ZXIgYWxsIHBvc3NpYmxlIGNvdW50cyBzdW0gdG8gb25lLCBhbmQgdGhlIHZhcmlhbmNlIG9mCnNpbXVsYXRlZCBjb3VudHMgaXMgY2xvc2UgdG8gdGhlIHRoZW9yZXRpY2FsIHZhbHVlICRucCgxLXApJDoKCipFeGVyY2lzZS4qIElmIGVhY2ggb2YgMTAwIHBhdGllbnRzIGhhcyBhIDUlIGNoYW5jZSBvZiBhIHNpZGUgZWZmZWN0LCB3aGF0IGlzCnRoZSBwcm9iYWJpbGl0eSB0aGF0IG1vcmUgdGhhbiAxMCBwYXRpZW50cyBleHBlcmllbmNlIGl0PwoKYGBge3IgYmlub21pYWwtZXhlcmNpc2V9CjEgLSBwYmlub20oMTAsIHNpemUgPSAxMDAsIHByb2IgPSAwLjA1KQpgYGAKCmBgYHtyIGJpbm9taWFsLWNoZWNrfQpzdW0oZGJpbm9tKHgsIDgwLCAwLjUpKQp2YXIocmJpbm9tKDEwMDAwMCwgc2l6ZSA9IDgwLCBwcm9iID0gMC41KSkgICAjIHNpbXVsYXRpb24KODAgKiAwLjUgKiAwLjUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyB0aGVvcnkKYGBgCgojIyMgUG9pc3NvbgoKVGhlIFBvaXNzb24gZGlzdHJpYnV0aW9uIGRlc2NyaWJlcyBjb3VudHMgb2YgZXZlbnRzIGluIGEgZml4ZWQgaW50ZXJ2YWwgKGZvcgpleGFtcGxlLCB0aGUgbnVtYmVyIG9mIHBhdGllbnRzIGFycml2aW5nIGF0IGFuIGVtZXJnZW5jeSBkZXBhcnRtZW50IGluIGFuCmhvdXIpLCB3aXRoIG1lYW4gJFxsYW1iZGEkLgoKYGBge3IgcG9pc3Nvbn0KeCA8LSAwOjYwCmxhbWJkYXMgPC0gYyg1LCAxMCwgMjAsIDQwKQpwbG90KHgsIGRwb2lzKHgsIGxhbWJkYXNbMV0pLCB0eXBlID0gImgiLCBsd2QgPSAyLCBjb2wgPSBwYWxbMV0sCiAgICAgeGxhYiA9ICJOdW1iZXIgb2YgZXZlbnRzIiwgeWxhYiA9ICJQKFggPSB4KSIsCiAgICAgbWFpbiA9ICJQb2lzc29uIGRpc3RyaWJ1dGlvbnMiKQpmb3IgKGsgaW4gMjo0KSBsaW5lcyh4LCBkcG9pcyh4LCBsYW1iZGFzW2tdKSwgdHlwZSA9ICJoIiwgbHdkID0gMiwgY29sID0gcGFsWzIgKiBrIC0gMV0pCmxlZ2VuZCgidG9wcmlnaHQiLCBsZWdlbmQgPSBsYW1iZGFzLCB0aXRsZSA9IGV4cHJlc3Npb24obGFtYmRhKSwKICAgICAgIGNvbCA9IHBhbFtjKDEsIDMsIDUsIDcpXSwgbHdkID0gMiwgYnR5ID0gIm4iKQpgYGAKCipFeGVyY2lzZS4qIFdpdGggJFxsYW1iZGEgPSA1JCwgd2hhdCBpcyB0aGUgcHJvYmFiaWxpdHkgb2Ygb2JzZXJ2aW5nIGF0IG1vc3QKdGhyZWUgZXZlbnRzPwoKYGBge3IgcG9pc3Nvbi1leGVyY2lzZX0Kc3VtKGRwb2lzKDA6MywgbGFtYmRhID0gNSkpCnBwb2lzKDMsIGxhbWJkYSA9IDUpICAgIyB0aGUgc2FtZSwgdXNpbmcgdGhlIGN1bXVsYXRpdmUgZGlzdHJpYnV0aW9uIGZ1bmN0aW9uCmBgYAoKIyMgVGhlIG5vcm1hbCBkaXN0cmlidXRpb24KCmBgYHtyIG5vcm1hbH0KeCA8LSBzZXEoLTMsIDExLCAwLjAxKQpwbG90KHgsIGRub3JtKHgsIG1lYW4gPSAyLCBzZCA9IDEpLCB0eXBlID0gImwiLCBsd2QgPSAzLCBjb2wgPSBwYWxbMl0sCiAgICAgeGxhYiA9ICJ4IiwgeWxhYiA9ICJmKHgpIikKbGluZXMoeCwgZG5vcm0oeCwgbWVhbiA9IDUsIHNkID0gMSksIGx3ZCA9IDMsIGNvbCA9IHBhbFs0XSkKbGluZXMoeCwgZG5vcm0oeCwgbWVhbiA9IDUsIHNkID0gMiksIGx3ZCA9IDMsIGNvbCA9IHBhbFs2XSkKbGVnZW5kKCJ0b3ByaWdodCIsIGxlZ2VuZCA9IGMoIk4oMiwgMSkiLCAiTig1LCAxKSIsICJOKDUsIDQpIiksCiAgICAgICBjb2wgPSBwYWxbYygyLCA0LCA2KV0sIGx3ZCA9IDMsIGJ0eSA9ICJuIikKYGBgCgpIb3cgbXVjaCBwcm9iYWJpbGl0eSBsaWVzIHdpdGhpbiBvbmUsIHR3byBhbmQgdGhyZWUgc3RhbmRhcmQgZGV2aWF0aW9ucyBvZiB0aGUKbWVhbj8KCmBgYHtyIHNpZ21hLXJ1bGV9CnBub3JtKDEpIC0gcG5vcm0oLTEpCnBub3JtKDIpIC0gcG5vcm0oLTIpCnBub3JtKDMpIC0gcG5vcm0oLTMpCmBgYAoKIyMjIGBkYCwgYHBgLCBgcWAgYW5kIGByYAoKRXZlcnkgZGlzdHJpYnV0aW9uIGluIFIgY29tZXMgd2l0aCBmb3VyIGZ1bmN0aW9ucy4gRm9yIHRoZSBub3JtYWwKZGlzdHJpYnV0aW9uOgoKfCBGdW5jdGlvbiB8IFJldHVybnMgfCBFeGFtcGxlIHwKfC0tLXwtLS18LS0tfAp8IGBkbm9ybSh4KWAgfCBkZW5zaXR5IGF0IGB4YCB8IGhlaWdodCBvZiB0aGUgY3VydmUgfAp8IGBwbm9ybShxKWAgfCAkUChYIFxsZSBxKSQgfCBhcmVhIHRvIHRoZSBsZWZ0IG9mIGBxYCB8CnwgYHFub3JtKHApYCB8IHRoZSB2YWx1ZSB3aXRoIGFyZWEgYHBgIHRvIGl0cyBsZWZ0IHwgaW52ZXJzZSBvZiBgcG5vcm1gIHwKfCBgcm5vcm0obilgIHwgYG5gIHJhbmRvbSBkcmF3cyB8IHNpbXVsYXRpb24gfAoKYGBge3IgZHBxcn0KcG5vcm0oMCkKcW5vcm0oMC45NzUpCnBub3JtKHFub3JtKDAuOCkpICAgIyBxbm9ybSBhbmQgcG5vcm0gdW5kbyBlYWNoIG90aGVyCnFub3JtKHBub3JtKC0xKSkKYGBgCgojIyBUaGUgY2VudHJhbCBsaW1pdCB0aGVvcmVtLCBieSBleHBlcmltZW50CgpTdXBwb3NlIGEgcG9wdWxhdGlvbiBmb2xsb3dzIGEgUG9pc3NvbiBkaXN0cmlidXRpb24gd2l0aCAkXGxhbWJkYSA9IDMkOiBpdCBpcwpkaXNjcmV0ZSBhbmQgc2tld2VkLCBub3RoaW5nIGxpa2UgYSBub3JtYWwgY3VydmUuIFdlIGRyYXcgbWFueSBzYW1wbGVzIGZyb20gaXQsCmNvbXB1dGUgZWFjaCBzYW1wbGUncyBtZWFuLCBhbmQgbG9vayBhdCB0aGUgZGlzdHJpYnV0aW9uIG9mIHRob3NlIG1lYW5zLgoKYGBge3IgY2x0LCBmaWcuaGVpZ2h0ID0gN30KbGFtYmRhIDwtIDMKbl9zYW1wbGVzIDwtIDEwMDAwCnBhcihtZnJvdyA9IGMoMiwgMikpCmJhcnBsb3QodGFibGUoZmFjdG9yKHJwb2lzKDEwMDAwLCBsYW1iZGEpLCBsZXZlbHMgPSAwOjEyKSkgLyAxMDAwMCwKICAgICAgICBjb2wgPSBwYWxbMV0sIG1haW4gPSAiUG9wdWxhdGlvbjogUG9pc3NvbigzKSIsIHlsYWIgPSAiUHJvcG9ydGlvbiIpCmZvciAobiBpbiBjKDIsIDEwLCA1MCkpIHsKICBtZWFucyA8LSByZXBsaWNhdGUobl9zYW1wbGVzLCBtZWFuKHJwb2lzKG4sIGxhbWJkYSkpKQogIGhpc3QobWVhbnMsIGJyZWFrcyA9IDQwLCBmcmVxID0gRkFMU0UsIGNvbCA9IHBhbFszXSwgYm9yZGVyID0gIndoaXRlIiwKICAgICAgIG1haW4gPSBwYXN0ZSgiTWVhbnMgb2Ygc2FtcGxlcyBvZiBzaXplIiwgbiksIHhsYWIgPSAiU2FtcGxlIG1lYW4iKQogIGN1cnZlKGRub3JtKHgsIG1lYW4gPSBsYW1iZGEsIHNkID0gc3FydChsYW1iZGEgLyBuKSksIGFkZCA9IFRSVUUsCiAgICAgICAgY29sID0gInJlZCIsIGx3ZCA9IDIpCn0KcGFyKG1mcm93ID0gYygxLCAxKSkKYGBgCgpBcyB0aGUgc2FtcGxlIHNpemUgZ3Jvd3MsIHRoZSBkaXN0cmlidXRpb24gb2YgdGhlIHNhbXBsZSBtZWFuIGJlY29tZXMgbW9yZQpzeW1tZXRyaWMgYW5kIGNsb3NlciB0byB0aGUgcmVkIG5vcm1hbCBjdXJ2ZSwgYW5kIGl0IGJlY29tZXMgbmFycm93ZXIuIFRoaXMgaXMKdGhlICoqY2VudHJhbCBsaW1pdCB0aGVvcmVtKio6IGZvciBsYXJnZSAkbiQsIHRoZSBzYW1wbGUgbWVhbiBpcyBhcHByb3hpbWF0ZWx5Cm5vcm1hbCB3aXRoIG1lYW4gJFxtdSQgYW5kIHN0YW5kYXJkIGRldmlhdGlvbiAkXHNpZ21hL1xzcXJ0e259JCwgd2hhdGV2ZXIgdGhlCnNoYXBlIG9mIHRoZSBwb3B1bGF0aW9uLgoKIyMgVHJ5IGl0IHlvdXJzZWxmCgoxLiBJbiB0aGUgY29pbiBleGFtcGxlLCBtYWtlIHRoZSBjb2luIHVuZmFpciB3aXRoCiAgIGBzYW1wbGUoYygwLCAxKSwgbiwgcmVwbGFjZSA9IFRSVUUsIHByb2IgPSBjKDAuNywgMC4zKSlgLiBXaGVyZSBkb2VzIHRoZQogICBwcm9wb3J0aW9uIHNldHRsZT8KMi4gUmVwZWF0IHRoZSBjZW50cmFsIGxpbWl0IHRoZW9yZW0gZXhwZXJpbWVudCB3aXRoIGEgdmVyeSBza2V3ZWQgcG9wdWxhdGlvbiwKICAgZm9yIGV4YW1wbGUgYHJleHAobiwgcmF0ZSA9IDEpYC4gSG93IGxhcmdlIG11c3QgJG4kIGJlIGJlZm9yZSB0aGUgc2FtcGxlCiAgIG1lYW5zIGxvb2sgbm9ybWFsPwozLiBVc2UgYHFub3JtKClgIHRvIGZpbmQgdGhlIHZhbHVlIHRoYXQgY3V0cyBvZmYgdGhlIHRvcCAyLjUlIG9mIGEgc3RhbmRhcmQKICAgbm9ybWFsIGRpc3RyaWJ1dGlvbi4gV2hlcmUgaGF2ZSB5b3Ugc2VlbiB0aGlzIG51bWJlciBiZWZvcmU/Cg==</div>
+<hr>
+<p style="font-size:0.85em;color:#666">Jiayun Jin · Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the MIT License.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("01-probability-and-simulation.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
