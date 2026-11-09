@@ -179,6 +179,8 @@ as complete lessons with code, simulations, explanations and exercises.
 
 **Objectives:** present an analysis of a self-chosen data set and answer questions from peers.
 
+[Each group receives feedback on its code, its visualisations and its choice of methods. Groups are encouraged to use AI tools, provided they share their prompts, and they answer questions live without them. Each group also reflects on what was hardest in the project and what they learned from it.]{.small}
+
 :::
 
 ::: {.session}
@@ -206,7 +208,7 @@ as complete lessons with code, simulations, explanations and exercises.
 
 **Objectives:** model a binary outcome, interpret odds ratios and evaluate predictions on new data.
 
-[Topics: maximum likelihood, AIC and BIC, log-odds and odds ratios, predicted probabilities, classification, sensitivity and specificity; looking back: choosing a method by the type of outcome and predictor.]{.small}
+[Topics: a look back at which method fits which type of outcome and predictor, leading to models for outcomes that are not normal; maximum likelihood, introduced through a scene from the TV drama *Lurk* (潜伏) in which the main characters find a stranger's footprints in their home and weigh the possible explanations; AIC and BIC, log-odds and odds ratios, predicted probabilities, classification, sensitivity and specificity.]{.small}
 
 → [Open the lesson](05-logistic-regression.html) · [Slides (PDF)](slides/14-generalised-linear-models.pdf)
 :::
@@ -229,10 +231,11 @@ as complete lessons with code, simulations, explanations and exercises.
 
 :::
 
-### How the methods fit together
+## How the methods fit together
 
-The last session on models brings the methods together by the type of outcome
-and predictor:
+Session 14 opens by looking back at the methods so far, organised by the type
+of outcome and predictor. The open question, what to do when the outcome is not
+normal, leads into generalised linear models:
 
 | Outcome | Predictor | Method in this course |
 |---|---|---|
