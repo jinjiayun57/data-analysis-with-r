@@ -206,7 +206,7 @@ as complete lessons with code, simulations, explanations and exercises.
 
 **Objectives:** model a binary outcome, interpret odds ratios and evaluate predictions on new data.
 
-[Topics: maximum likelihood, AIC and BIC, log-odds and odds ratios, predicted probabilities, classification, sensitivity and specificity.]{.small}
+[Topics: maximum likelihood, AIC and BIC, log-odds and odds ratios, predicted probabilities, classification, sensitivity and specificity; looking back: choosing a method by the type of outcome and predictor.]{.small}
 
 → [Open the lesson](05-logistic-regression.html) · [Slides (PDF)](slides/14-generalised-linear-models.pdf)
 :::
@@ -218,7 +218,7 @@ as complete lessons with code, simulations, explanations and exercises.
 
 **Objectives:** connect the methods of the course and look ahead to `ggplot2` and to data science more broadly.
 
-[Topics: a concept map of the whole course, choosing a method by the type of outcome and predictor, `ggplot2`, data science more broadly.]{.small}
+[Topics: a concept map of the whole course; a first look at `ggplot2` through a video tutorial; data science more broadly, closing with a music video on data science.]{.small}
 
 :::
 
